@@ -24,7 +24,7 @@
 # ! Important(read the following instructions)  
 ## Task Workflow
 
-• Every member should create branches before doing any task.  
+• Every member should create branches and put their work in a folder with the task's name before doing any task.  
 • Each member should put understandable comments on their code.  
 • Submit pull requests for review before merging changes.  
 • Each pull request should be reviewed by at least one team member.   
