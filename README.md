@@ -6,6 +6,7 @@
 
 - Assem Killany:  
 > 1. Profile Management
+> 2. Initial UML diagram
 
 - Mohamed Hani:  
 > 1. Newsfeed Page
