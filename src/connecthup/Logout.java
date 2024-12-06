@@ -10,11 +10,17 @@ package connecthup;
  */
 public class Logout extends javax.swing.JFrame {
 private UserAccountManagmentGUI loginFrame; 
+ private UserAccountManagement userAccountManagement;  // Make sure to add this field
+    private String currentUserEmail;  // The current logged-in user's email
+     private FriendManagement friendManagement;
     /**
      * Creates new form Logout
      */
-    public Logout(UserAccountManagmentGUI loginFrame) {
+    public Logout(UserAccountManagmentGUI loginFrame, UserAccountManagement userAccountManagement, String currentUserEmail, FriendManagement friendManagement) {
           this.loginFrame = loginFrame; 
+          this.userAccountManagement = userAccountManagement;
+        this.currentUserEmail = currentUserEmail;
+         this.friendManagement = friendManagement; 
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -30,6 +36,7 @@ private UserAccountManagmentGUI loginFrame;
 
         logout = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        Friendmanage = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -42,23 +49,38 @@ private UserAccountManagmentGUI loginFrame;
 
         jLabel1.setText("hellooooo");
 
+        Friendmanage.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Friendmanage.setText("Friendmanage");
+        Friendmanage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FriendmanageActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(145, 145, 145)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logout))
-                .addContainerGap(165, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(145, 145, 145)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(logout)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(87, 87, 87)
+                        .addComponent(Friendmanage, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(127, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addComponent(Friendmanage)
+                .addGap(18, 18, 18)
                 .addComponent(logout)
                 .addGap(131, 131, 131))
         );
@@ -78,9 +100,22 @@ private UserAccountManagmentGUI loginFrame;
     
     }//GEN-LAST:event_logoutActionPerformed
 
+    private void FriendmanageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FriendmanageActionPerformed
+        // Create the FriendManagementGUI frame and pass the necessary parameters
+    FriendManagementGUI friendManagementGUI = new FriendManagementGUI(userAccountManagement, friendManagement, currentUserEmail);
+
+    // Hide the current Logout frame
+    this.setVisible(false);
+
+    // Show the FriendManagementGUI frame
+    friendManagementGUI.setVisible(true); 
+ 
+    }//GEN-LAST:event_FriendmanageActionPerformed
+
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Friendmanage;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton logout;
     // End of variables declaration//GEN-END:variables

@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
  *
  * @author mohamed
  */
-public class SignUpGUI extends javax.swing.JFrame {
+   public class SignUpGUI extends javax.swing.JFrame {
     private UserAccountManagement userAccountManagement;
     private UserAccountManagmentGUI loginFrame;
 
@@ -41,12 +41,10 @@ public class SignUpGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         date = new javax.swing.JTextField();
@@ -58,10 +56,6 @@ public class SignUpGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("User ID");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, -1, -1));
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Email");
@@ -78,9 +72,6 @@ public class SignUpGUI extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("dateOfBirth");
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 240, 70, 20));
-
-        jTextField1.setBackground(new java.awt.Color(204, 204, 204));
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 80, 130, -1));
 
         jTextField2.setBackground(new java.awt.Color(204, 204, 204));
         getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 130, -1));
@@ -133,10 +124,10 @@ public class SignUpGUI extends javax.swing.JFrame {
 String password = new String(Password.getPassword()).trim(); // Password trimming
 String username = jTextField3.getText().trim();
 String dateOfBirth = date.getText().trim();
-String userId = jTextField1.getText().trim();
+
 
 // Check for missing fields
-if (userId.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty() || dateOfBirth.isEmpty()) {
+if (email.isEmpty() || username.isEmpty() || password.isEmpty() || dateOfBirth.isEmpty()) {
     JOptionPane.showMessageDialog(this, "Please fill missing fields.", "Error", JOptionPane.ERROR_MESSAGE);
     return;
 }
@@ -149,7 +140,7 @@ if (!userAccountManagement.isValidDate(dateOfBirth)) {
 
 // Perform signup
 try {
-    userAccountManagement.signup(userId, email, username, password, dateOfBirth);
+    userAccountManagement.signup( email, username, password, dateOfBirth);
     JOptionPane.showMessageDialog(this, "Account created successfully! Please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
      System.out.println("User signed up: " + email); // Debugging: Check if user is signed up
      
@@ -202,18 +193,10 @@ try {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-        // Create an instance of UserAccountManagement (backend)
-        UserAccountManagement userAccountManagement = new UserAccountManagement();
-        
-        // Create an instance of UserAccountManagmentGUI (login frame)
+         UserAccountManagement userAccountManagement = new UserAccountManagement();
         UserAccountManagmentGUI loginFrame = new UserAccountManagmentGUI(userAccountManagement);
-        
-        // Create and display the SignUpGUI, passing the backend and login frame
-        new SignUpGUI(userAccountManagement, loginFrame).setVisible(true);
-    });
-}
+        java.awt.EventQueue.invokeLater(() -> new SignUpGUI(userAccountManagement, loginFrame).setVisible(true));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateAccount;
@@ -221,13 +204,11 @@ try {
     private javax.swing.JButton back;
     private javax.swing.JTextField date;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables

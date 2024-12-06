@@ -119,10 +119,10 @@ if (password.isEmpty()) {
             if (success) {
                 JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + email + "!");
                 this.setVisible(false); // Hide login frame
-                
+                FriendManagement friendManagement = new FriendManagement(userAccountManagement);
                 
                 // Pass this frame to the Logout frame to allow switching back to the login
-                new Logout(this).setVisible(true); // Show logout frame and pass current frame
+              new Logout(this, userAccountManagement, email,friendManagement).setVisible(true);  // Show logout frame and pass current frame
             } else {
                 JOptionPane.showMessageDialog(this, "Login failed. Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
             }
