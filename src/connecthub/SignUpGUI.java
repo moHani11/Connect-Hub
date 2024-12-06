@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
  *
  * @author mohamed
  */
-public class SignUpGUI extends javax.swing.JFrame {
+   public class SignUpGUI extends javax.swing.JFrame {
     private UserAccountManagement userAccountManagement;
     private UserAccountManagmentGUI loginFrame;
     private ConnectHubEngine cEngine;
@@ -124,7 +124,11 @@ public class SignUpGUI extends javax.swing.JFrame {
 String password = new String(Password.getPassword()).trim(); // Password trimming
 String username = jTextField3.getText().trim();
 String dateOfBirth = date.getText().trim();
+<<<<<<< HEAD:src/connecthub/SignUpGUI.java
 //String userId = jTextField1.getText().trim();
+=======
+
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/SignUpGUI.java
 
 // Check for missing fields
 if (email.isEmpty() || username.isEmpty() || password.isEmpty() || dateOfBirth.isEmpty()) {
@@ -140,7 +144,11 @@ if (!userAccountManagement.isValidDate(dateOfBirth)) {
 
 // Perform signup
 try {
+<<<<<<< HEAD:src/connecthub/SignUpGUI.java
     userAccountManagement.signup(email, username, password, dateOfBirth);
+=======
+    userAccountManagement.signup( email, username, password, dateOfBirth);
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/SignUpGUI.java
     JOptionPane.showMessageDialog(this, "Account created successfully! Please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
      System.out.println("User signed up: " + email); // Debugging: Check if user is signed up
      
@@ -195,6 +203,7 @@ try {
         }
         //</editor-fold>
 
+<<<<<<< HEAD:src/connecthub/SignUpGUI.java
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
         // Create an instance of UserAccountManagement (backend)
@@ -207,6 +216,12 @@ try {
 //        new SignUpGUI(userAccountManagement, loginFrame, ).setVisible(true);
     });
 }
+=======
+         UserAccountManagement userAccountManagement = new UserAccountManagement();
+        UserAccountManagmentGUI loginFrame = new UserAccountManagmentGUI(userAccountManagement);
+        java.awt.EventQueue.invokeLater(() -> new SignUpGUI(userAccountManagement, loginFrame).setVisible(true));
+    }
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/SignUpGUI.java
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateAccount;

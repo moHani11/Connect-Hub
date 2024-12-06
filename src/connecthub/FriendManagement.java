@@ -1,4 +1,8 @@
+<<<<<<< HEAD:src/connecthub/FriendManagement.java
 package connecthub;
+=======
+package connecthup;
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagement.java
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +20,19 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.DefaultListModel;
 
+<<<<<<< HEAD:src/connecthub/FriendManagement.java
+=======
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+/**
+ *
+ * @author mohamed
+ */
+
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagement.java
 public class FriendManagement {
     private Map<String, Set<String>> friendRequests = new HashMap<>();
     private UserAccountManagement userAccountManagement;
@@ -30,6 +47,7 @@ public class FriendManagement {
     }
 
     public void sendFriendRequest(String senderEmail, String receiverEmail) {
+<<<<<<< HEAD:src/connecthub/FriendManagement.java
     // Ensure the receiver's friend requests map exists
     friendRequests.computeIfAbsent(receiverEmail, k -> new HashSet<>());
     
@@ -39,6 +57,17 @@ public class FriendManagement {
     // Save the updated friend requests to file
     saveFriendRequests();
 }
+=======
+        if (senderEmail.equals(receiverEmail)) {
+            throw new IllegalArgumentException("You cannot send a friend request to yourself.");
+        }
+        if (userAccountManagement.getBlockedUsers(receiverEmail).contains(senderEmail)) {
+            throw new IllegalArgumentException("You are blocked by this user.");
+        }
+          friendRequests.computeIfAbsent(receiverEmail, k -> new HashSet<>()).add(senderEmail);
+        saveFriendRequests();
+    }
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagement.java
 
    public void acceptFriendRequest(String senderEmail, String receiverEmail) {
         Set<String> requests = friendRequests.get(receiverEmail);
@@ -64,6 +93,7 @@ public class FriendManagement {
     }
 
     private void loadFriendRequests() {
+<<<<<<< HEAD:src/connecthub/FriendManagement.java
     try (Reader reader = new FileReader(FRIEND_REQUESTS_FILE)) {
         friendRequests = gson.fromJson(reader, new TypeToken<Map<String, Set<String>>>(){}.getType());
         if (friendRequests == null) {
@@ -77,6 +107,20 @@ public class FriendManagement {
         e.printStackTrace();
     }
 }
+=======
+        try (Reader reader = new FileReader(FRIEND_REQUESTS_FILE)) {
+            friendRequests = gson.fromJson(reader, new TypeToken<Map<String, Set<String>>>(){}.getType());
+            if (friendRequests == null) {
+                friendRequests = new HashMap<>();
+            }
+        } catch (FileNotFoundException e) {
+            // If file is not found, no data, so we initialize an empty map
+            friendRequests = new HashMap<>();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagement.java
     public void removeFriend(String userEmail, String friendEmail) {
         userAccountManagement.getFriends(userEmail).remove(friendEmail);
         userAccountManagement.getFriends(friendEmail).remove(userEmail);

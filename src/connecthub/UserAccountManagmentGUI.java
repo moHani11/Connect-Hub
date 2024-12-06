@@ -114,8 +114,15 @@ if (password.isEmpty()) {
             if (loggedInUser != null) {
                 JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + email + "!");
                 this.setVisible(false); // Hide login frame
+<<<<<<< HEAD:src/connecthub/UserAccountManagmentGUI.java
                 NewsFeed userFeed = new NewsFeed(loggedInUser);
                 
+=======
+                FriendManagement friendManagement = new FriendManagement(userAccountManagement);
+                
+                // Pass this frame to the Logout frame to allow switching back to the login
+              new Logout(this, userAccountManagement, email,friendManagement).setVisible(true);  // Show logout frame and pass current frame
+>>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/UserAccountManagmentGUI.java
             } else {
                 JOptionPane.showMessageDialog(this, "Login failed. Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
             }
