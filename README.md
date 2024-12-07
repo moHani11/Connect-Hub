@@ -1,23 +1,33 @@
-# This Repo present our work in the Connect Hub Java Assignment  
+# This Branch present our work that continues the Connect Hub Java Assignment
+
+## !New Important Instructions(Must be Done) <<<<<<
+
+- Every time a member does anything in the code he should commit the changes and push them into his corresponding branch even if the code is not working so other members can see the progress done in the corresponding task.
+
+- When commiting changes into the code the commit message should refer to the changes done in the code and not leave the commit message empty. 
+
+- A pull request is not done until the task is fully finished and the code should be merged into the main branch.
 
 # Tasks Distribution:
 
 ### Note that in any task every member should check for validations and put **try**s and **except**s for code stability by default, the code should not crash at any instance.
 
 - Assem Killany:  
-> 1. Profile Management
-> 2. Initial UML diagram
+> 1. Notificaion System
+> 2. Initial State Diagram
 
 - Mohamed Hani:  
-> 1. Newsfeed Page
-> 2. Database Management (File-Structure, optimization techniques)
+> 1. Finish what's left from Lab 9
+> 2. Newsfeed Page Extended
+> 3. Initial Use-Case diagram
 
 - Mohamed Mostafa:  
-> 1.  User Account Managment,  
-> 2. Friend Management
+> 1. Search Functionality  
+> 2. Initial UML diagram
 
 - Mazin Wael:       
-> 1. Content Creation (Posts and Stories)
+> 1. Group Management
+> 2. Initial Sequence Diagram
 
 
 #### ! Any Member who finished his work should inform others so he take another task if possible
