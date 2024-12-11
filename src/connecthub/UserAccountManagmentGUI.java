@@ -1,5 +1,8 @@
 package connecthub;
 
+import java.awt.Color;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.JOptionPane;
 
@@ -23,6 +26,28 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
         initComponents();
           setTitle("Connect-Hub");
         setLocationRelativeTo(null);
+        
+        Email.setForeground(Color.GRAY);
+        Email.setText("Email");
+
+        // إضافة FocusListener لتغيير النص
+        Email.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (Email.getText().equals("Email")) {
+                    Email.setText("");
+                    Email.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (Email.getText().isEmpty()) {
+                    Email.setForeground(Color.GRAY);
+                    Email.setText("Email");
+                }
+            }
+        });
     }
 
 
@@ -30,6 +55,8 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         Login = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -37,7 +64,12 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         Email = new javax.swing.JTextField();
         Password = new javax.swing.JPasswordField();
+        jLabel5 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -50,17 +82,17 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
                 LoginActionPerformed(evt);
             }
         });
-        getContentPane().add(Login, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 370, 130, 20));
+        getContentPane().add(Login, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 350, 130, 20));
 
         jLabel2.setFont(new java.awt.Font("Segoe Print", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connecthub/logo.png"))); // NOI18N
         jLabel2.setText("WELCOME!");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 150, 80));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 250, 80));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Login");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 100, 40));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 210, 100, 40));
 
         SignUp.setBackground(new java.awt.Color(153, 153, 153));
         SignUp.setText("Sign Up");
@@ -69,12 +101,11 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
                 SignUpActionPerformed(evt);
             }
         });
-        getContentPane().add(SignUp, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 430, -1, -1));
+        getContentPane().add(SignUp, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 430, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Don't have an account?");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 400, -1, -1));
+        jLabel4.setText("New to Connect ?");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 400, -1, -1));
 
         Email.setBackground(new java.awt.Color(204, 204, 204));
         Email.addActionListener(new java.awt.event.ActionListener() {
@@ -82,13 +113,17 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
                 EmailActionPerformed(evt);
             }
         });
-        getContentPane().add(Email, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 280, 230, 30));
+        getContentPane().add(Email, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 250, 240, 30));
 
         Password.setBackground(new java.awt.Color(204, 204, 204));
-        getContentPane().add(Password, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 320, 230, 30));
+        getContentPane().add(Password, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 300, 140, 30));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connecthub/360_F_691051962_GFhQPOAXABmf7l706q89b2PFh6FnB1kI.jpg"))); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 550));
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setText("Password :");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 100, 30));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connecthub/Gradient Background.jpg"))); // NOI18N
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 320, 530));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -114,15 +149,8 @@ if (password.isEmpty()) {
             if (loggedInUser != null) {
                 JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + email + "!");
                 this.setVisible(false); // Hide login frame
-<<<<<<< HEAD:src/connecthub/UserAccountManagmentGUI.java
                 NewsFeed userFeed = new NewsFeed(loggedInUser);
                 
-=======
-                FriendManagement friendManagement = new FriendManagement(userAccountManagement);
-                
-                // Pass this frame to the Logout frame to allow switching back to the login
-              new Logout(this, userAccountManagement, email,friendManagement).setVisible(true);  // Show logout frame and pass current frame
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/UserAccountManagmentGUI.java
             } else {
                 JOptionPane.showMessageDialog(this, "Login failed. Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -161,5 +189,8 @@ if (password.isEmpty()) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }

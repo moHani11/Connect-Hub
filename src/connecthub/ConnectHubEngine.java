@@ -21,7 +21,14 @@ public class ConnectHubEngine {
 
     public void loadData(UserAccountManagement u){
         this.usersList = JsonDataManger.loadUsersFromJsonFile("usersss.json");
+        
         this.populateUserDatabase(u);
+    }
+    
+    public void saveData(UserAccountManagement u){
+        this.populateUsersListFromMap(u.userDatabase);
+//        System.out.println(u.getUserByEmail("2@gmail.com").getFriendRequests());
+        JsonDataManger.writeUsers(usersList, "usersss.json");
     }
     
     // Getters and Setters for usersList
@@ -88,6 +95,7 @@ public class ConnectHubEngine {
     public void populateUsersListFromMap(Map<String, User> userDatabase) {
     if (userDatabase != null) {
         usersList = new ArrayList<>(userDatabase.values());
+        
     } else {
         System.out.println("userDatabase is null. Cannot populate usersList.");
     }
@@ -103,5 +111,14 @@ public class ConnectHubEngine {
             System.out.println("The user list is null or empty!");
         }
     }
+    
+    public User updateUser(UserAccountManagement userAccountManagement, User user){
+        this.usersList = JsonDataManger.loadUsersFromJsonFile("usersss.json");
+        String Email = userAccountManagement.getEmailByID(user.getUserId());
+        populateUserDatabase(userAccountManagement);
+        user = userAccountManagement.getUserByEmail(Email);
+        return user;
+    } 
+
 
 }

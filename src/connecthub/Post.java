@@ -42,6 +42,12 @@ public class Post {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+      public String getUsername(){
+        ConnectHubEngine c = new ConnectHubEngine();
+        UserAccountManagement u = new UserAccountManagement(c);
+        return u.getUsernameByID(this.userId);
+    }
+
     public Date getCreationDate() {
         return creationDate;
     }

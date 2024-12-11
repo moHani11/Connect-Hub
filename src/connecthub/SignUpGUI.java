@@ -4,6 +4,9 @@
  */
 package connecthub;
 
+import java.awt.Color;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,13 +17,13 @@ import javax.swing.JOptionPane;
  *
  * @author mohamed
  */
-   public class SignUpGUI extends javax.swing.JFrame {
+public class SignUpGUI extends javax.swing.JFrame {
     private UserAccountManagement userAccountManagement;
     private UserAccountManagmentGUI loginFrame;
     private ConnectHubEngine cEngine;
 
 
-
+    
     public SignUpGUI(UserAccountManagement userAccountManagement, UserAccountManagmentGUI loginFrame, ConnectHubEngine c) {
         this.cEngine = c;
          this.userAccountManagement = userAccountManagement;
@@ -28,7 +31,73 @@ import javax.swing.JOptionPane;
           setTitle("Sign Up");
           this.loginFrame = loginFrame;
         setLocationRelativeTo(null);
+        // اخلي النص شفاف عشان اوجه تعليمات للمستخدم
+          jTextField2.setForeground(Color.GRAY);
+        jTextField2.setText("Email");
+
+        // إضافة FocusListener لتغيير النص
+        jTextField2.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (jTextField2.getText().equals("Email")) {
+                    jTextField2.setText("");
+                    jTextField2.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (jTextField2.getText().isEmpty()) {
+                    jTextField2.setForeground(Color.GRAY);
+                    jTextField2.setText("Email");
+                }
+            }
+        });
+          jTextField3.setForeground(Color.GRAY);
+        jTextField3.setText("Username");
+//        jLabel6.setComponentZOrder(this, 0);
+        // إضافة FocusListener لتغيير النص
+        jTextField3.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (jTextField3.getText().equals("Username")) {
+                    jTextField3.setText("");
+                    jTextField3.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (jTextField3.getText().isEmpty()) {
+                    jTextField3.setForeground(Color.GRAY);
+                    jTextField3.setText("Username");
+                }
+            }
+        });
+          date.setForeground(Color.GRAY);
+        date.setText("YYYY-MM-DD");
+
+        // إضافة FocusListener لتغيير النص
+        date.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (date.getText().equals("YYYY-MM-DD")) {
+                    date.setText("");
+                    date.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (date.getText().isEmpty()) {
+                    date.setForeground(Color.GRAY);
+                    date.setText("YYYY-MM-DD");
+                }
+            }
+        });
     }
+    
+    
     // This method validates if the entered date is in the correct format (YYYY-MM-DD)
     
 
@@ -41,43 +110,28 @@ import javax.swing.JOptionPane;
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         date = new javax.swing.JTextField();
         CreateAccount = new javax.swing.JButton();
         Password = new javax.swing.JPasswordField();
-        jLabel3 = new javax.swing.JLabel();
         back = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Email");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, -1, -1));
-
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Username");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, -1, -1));
-
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Password");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, -1, -1));
-
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("dateOfBirth");
-        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 240, 70, 20));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 240, -1, -1));
 
         jTextField2.setBackground(new java.awt.Color(204, 204, 204));
-        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 130, -1));
+        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, 190, -1));
 
         jTextField3.setBackground(new java.awt.Color(204, 204, 204));
-        getContentPane().add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 160, 130, -1));
+        getContentPane().add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, 190, -1));
 
         date.setBackground(new java.awt.Color(204, 204, 204));
         date.addActionListener(new java.awt.event.ActionListener() {
@@ -85,7 +139,7 @@ import javax.swing.JOptionPane;
                 dateActionPerformed(evt);
             }
         });
-        getContentPane().add(date, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 240, 130, -1));
+        getContentPane().add(date, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 280, 190, -1));
 
         CreateAccount.setBackground(new java.awt.Color(153, 153, 153));
         CreateAccount.setText("Create Account");
@@ -94,15 +148,10 @@ import javax.swing.JOptionPane;
                 CreateAccountActionPerformed(evt);
             }
         });
-        getContentPane().add(CreateAccount, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 310, -1, -1));
+        getContentPane().add(CreateAccount, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 330, -1, -1));
 
         Password.setBackground(new java.awt.Color(204, 204, 204));
-        getContentPane().add(Password, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 198, 130, -1));
-
-        jLabel3.setFont(new java.awt.Font("Segoe Print", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Sign Up...");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 90, 40));
+        getContentPane().add(Password, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 240, 130, -1));
 
         back.setBackground(new java.awt.Color(153, 153, 153));
         back.setText("<--");
@@ -113,8 +162,12 @@ import javax.swing.JOptionPane;
         });
         getContentPane().add(back, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 50, 20));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connecthub/360_F_691051962_GFhQPOAXABmf7l706q89b2PFh6FnB1kI.jpg"))); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 490));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connecthub/signup.png"))); // NOI18N
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 50, 60));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 110, -1, -1));
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connecthub/Gradient Background.jpg"))); // NOI18N
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -124,11 +177,7 @@ import javax.swing.JOptionPane;
 String password = new String(Password.getPassword()).trim(); // Password trimming
 String username = jTextField3.getText().trim();
 String dateOfBirth = date.getText().trim();
-<<<<<<< HEAD:src/connecthub/SignUpGUI.java
 //String userId = jTextField1.getText().trim();
-=======
-
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/SignUpGUI.java
 
 // Check for missing fields
 if (email.isEmpty() || username.isEmpty() || password.isEmpty() || dateOfBirth.isEmpty()) {
@@ -144,11 +193,7 @@ if (!userAccountManagement.isValidDate(dateOfBirth)) {
 
 // Perform signup
 try {
-<<<<<<< HEAD:src/connecthub/SignUpGUI.java
     userAccountManagement.signup(email, username, password, dateOfBirth);
-=======
-    userAccountManagement.signup( email, username, password, dateOfBirth);
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/SignUpGUI.java
     JOptionPane.showMessageDialog(this, "Account created successfully! Please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
      System.out.println("User signed up: " + email); // Debugging: Check if user is signed up
      
@@ -180,6 +225,7 @@ try {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -203,7 +249,6 @@ try {
         }
         //</editor-fold>
 
-<<<<<<< HEAD:src/connecthub/SignUpGUI.java
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
         // Create an instance of UserAccountManagement (backend)
@@ -216,24 +261,16 @@ try {
 //        new SignUpGUI(userAccountManagement, loginFrame, ).setVisible(true);
     });
 }
-=======
-         UserAccountManagement userAccountManagement = new UserAccountManagement();
-        UserAccountManagmentGUI loginFrame = new UserAccountManagmentGUI(userAccountManagement);
-        java.awt.EventQueue.invokeLater(() -> new SignUpGUI(userAccountManagement, loginFrame).setVisible(true));
-    }
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/SignUpGUI.java
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CreateAccount;
     private javax.swing.JPasswordField Password;
     private javax.swing.JButton back;
     private javax.swing.JTextField date;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables

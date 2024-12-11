@@ -7,6 +7,8 @@ package connecthub;
 import java.util.HashSet;
 import java.util.Set;
 import org.json.simple.JSONObject;
+import org.json.simple.*;
+
 
 
  
@@ -22,6 +24,7 @@ import org.json.simple.JSONObject;
         private Set<String> friends = new HashSet<>();
         private Set<String> friendRequests = new HashSet<>();
         private Set<String> blockedUsers = new HashSet<>();
+        private UserAccountManagement userAccountManagement;
 
         public User() {
         }
@@ -60,6 +63,11 @@ import org.json.simple.JSONObject;
 
         public boolean isOnline() {
             return isOnline;    // Getter for online status
+        }
+        
+        public String getstatus(){
+            if (this.isOnline) return "Online";
+            return "Offline";
         }
 
         public void setOnline(boolean online) {
@@ -111,6 +119,21 @@ public void addFriend(String email) {
             jsonObject.put("password", password);
             jsonObject.put("dateOfBirth", dateOfBirth);
             jsonObject.put("isOnline", isOnline);
+
+    JSONArray friendsArray = new JSONArray();
+    friendsArray.addAll(friends);
+    jsonObject.put("friends", friendsArray);
+
+    JSONArray friendRequestsArray = new JSONArray();
+    friendRequestsArray.addAll(friendRequests);
+    jsonObject.put("friendRequests", friendRequestsArray);
+
+    JSONArray blockedUsersArray = new JSONArray();
+    blockedUsersArray.addAll(blockedUsers);
+    jsonObject.put("blockedUsers", blockedUsersArray);
+
+    
+    
             return jsonObject;
         }
 
@@ -124,6 +147,14 @@ public void addFriend(String email) {
 
             User user = new User(userId, email, username, password, dateOfBirth);
             user.isOnline = isOnline;
+
+            // Deserialize JSON arrays to sets
+            user.friends = new HashSet<>((JSONArray) jsonObject.get("friends"));
+            user.friendRequests = new HashSet<>((JSONArray) jsonObject.get("friendRequests"));
+            user.blockedUsers = new HashSet<>((JSONArray) jsonObject.get("blockedUsers"));
+
+
+
             return user;
         }
  }

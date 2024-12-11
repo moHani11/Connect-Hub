@@ -24,6 +24,12 @@ public class Story {
     public Date getCreationDate() {
         return creationDate;
     }
+    
+    public String getUsername(){
+        ConnectHubEngine c = new ConnectHubEngine();
+        UserAccountManagement u = new UserAccountManagement(c);
+        return u.getUsernameByID(this.userId);
+    }
 
     public boolean isExpired() {
         long currentTime = System.currentTimeMillis();

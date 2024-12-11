@@ -11,8 +11,6 @@ public class ConnectHub {
     
     public static void main(String[] args) {
 
-       User u = new User("111", "12@gmail.com","111","1", "2020-10-12");
-       User u2 = new User("211", "2@gmail.com","33","2", "2020-10-12");
 
 //            NewsFeed n = new NewsFeed(u2);
         
@@ -27,7 +25,7 @@ public class ConnectHub {
             ConnectHubEngine c = new ConnectHubEngine();
             UserAccountManagement u = new UserAccountManagement(c);
             UserAccountManagmentGUI uGUI = new UserAccountManagmentGUI(u, c);
-            
+
             c.loadData(u);
                    
 

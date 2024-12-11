@@ -1,6 +1,8 @@
 package connecthub;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,21 +14,18 @@ public class SocialMediaApp {
     private JLabel imageLabel;
     private JPanel postsPanel, storiesPanel;
     private String selectedImagePath = null;
-//    private PostManager postManager;
-//    private StoryManager storyManager;
     private JLabel postImageLabel;
     User user  ;
     public SocialMediaApp(User u) {
+        
         user = u;
-//        postManager = new PostManager();  // Initialize PostManager for handling posts
-//        storyManager = new StoryManager();  // Initialize StoryManager for handling stories
-//        storyManager.startAutoCleanup();  // Start auto cleanup for expired stories
         initializeUI();  // Initialize the user interface
     }
 
     private void initializeUI() {
         frame = new JFrame("Content Creation Area");
         frame.setSize(800, 600);
+        frame.setLocation(400,130);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         
@@ -44,7 +43,32 @@ public class SocialMediaApp {
 
     // Add the top panel to the frame
     frame.add(topPanel, BorderLayout.NORTH);
-        
+     frame.addWindowListener(new WindowAdapter() {
+    @Override
+    public void windowClosing(WindowEvent e) {
+        // Custom action on close
+        int response = JOptionPane.showConfirmDialog(
+                frame,
+                "Are you sure you want to leave Connect Hub?",
+                "Confirm Close",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+        if (response == JOptionPane.YES_OPTION) {
+            // Perform logout or any other necessary cleanup
+            ConnectHubEngine c = new ConnectHubEngine();
+            UserAccountManagement userAccountManagement = new UserAccountManagement(c);
+            
+            userAccountManagement.logout(user.getEmail());
+            System.out.println("Logout");
+            
+            frame.dispose(); // Close the window
+        } else {
+            // Do nothing to ensure the window remains open
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+    }
+});
         frame.setVisible(true);
 
     }
@@ -96,6 +120,22 @@ public class SocialMediaApp {
         panel.add(chooseImageButton);
         
         addButton(panel, "Create Post", e -> createPost());  // Add button to create the post
+        
+            JPanel topPanel = new JPanel();
+            topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+            topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            JButton editButton = new JButton("Edit");
+//            editButton.addActionListener(e -> editPost(post));  // Set edit button action
+            editButton.addActionListener(e -> choosePost(true));  // Set edit button action
+            
+JButton deleteButton = new JButton("Delete");
+            deleteButton.addActionListener(e -> choosePost(false));  // Set delete button action
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.add(editButton);
+            buttonPanel.add(deleteButton);
+            topPanel.add(buttonPanel);
+            panel.add(topPanel);
+        
         return panel;
     }
 
@@ -169,6 +209,147 @@ public class SocialMediaApp {
         refreshPosts();  // Refresh the posts display
     }
 
+    private void choosePost(boolean flag){
+        
+         ArrayList<Post> posts = user.postManager.getPosts();
+        if (posts.isEmpty()) {
+            showMessage("No posts to delete.");
+            return;
+        }
+        String[] postOptions = new String[posts.size()];
+        for (int i = 0; i < posts.size(); i++) {
+            postOptions[i] = "Post " + (i + 1) + " - " + formatDate(posts.get(i).getCreationDate());
+        }
+        String selectedPost = (String) JOptionPane.showInputDialog(
+                frame,
+                "Select a Post:",
+                "Choose Post",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                postOptions,
+                postOptions[0]
+        );
+        if (selectedPost != null) {
+            for (int i = 0; i < posts.size(); i++) {
+                if (selectedPost.contains("Post " + (i + 1))) {
+                     Post post = posts.get(i);
+                     if (flag)  editPost(post);
+                     else deletePost(post);
+                     
+
+//                    user.storyManager.deleteStory(storyToDelete.getUserId(), storyToDelete.getCreationDate());
+                    break;
+                }
+            }
+//            refreshPosts();  // Refresh the stories display after deletion  --  --------
+        }
+        
+    }
+    
+    private void editPost(Post post) {
+    // Create a panel for editing the post
+    JPanel editPanel = new JPanel();
+    editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
+        
+    // Add a text area for editing the content
+    JTextArea textArea = new JTextArea(post.getContent(), 5, 20);
+    textArea.setWrapStyleWord(true);
+    textArea.setLineWrap(true);
+    JScrollPane scrollPane = new JScrollPane(textArea);
+    editPanel.add(new JLabel("Edit the content:"));
+    editPanel.add(scrollPane);
+
+    // Display the current image if available
+    JLabel imageLabel = new JLabel();
+    if (post.getImagePath() != null) {
+        // Show the post's image
+        ImageIcon imageIcon = new ImageIcon(new ImageIcon(post.getImagePath()).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+        imageLabel.setIcon(imageIcon);
+        editPanel.add(imageLabel);
+
+        // Add a button to change the image
+        JButton changeImageButton = new JButton("Change Image");
+        
+        changeImageButton.addActionListener(e -> {
+            selectImageForPost();
+            if (selectedImagePath != null) {
+                post.setImagePath(selectedImagePath);
+                imageLabel.setIcon(new ImageIcon(new ImageIcon(post.getImagePath()).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+                post.setLastModifiedDate(new Date());  // Update the modification date
+            }
+        });
+        editPanel.add(changeImageButton);
+
+        // Add a button to remove the image
+        JButton deleteImageButton = new JButton("Remove Image");
+        deleteImageButton.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(frame, "Are you sure you want to remove the image?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                post.setImagePath(null);
+                post.setLastModifiedDate(new Date());
+                imageLabel.setIcon(null);
+                imageLabel.setText("No Image Selected");
+            }
+        });
+        editPanel.add(deleteImageButton);
+    } else {
+        // Add a button to add an image if none exists
+        JButton addImageButton = new JButton("Add Image");
+        addImageButton.addActionListener(e -> {
+            selectImageForPost();
+            if (selectedImagePath != null) {
+                post.setImagePath(selectedImagePath);
+                imageLabel.setIcon(new ImageIcon(new ImageIcon(post.getImagePath()).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+                post.setLastModifiedDate(new Date());  // Update the modification date
+            }
+        });
+        editPanel.add(addImageButton);
+    }
+
+    // Display the edit dialog with OK and Cancel options
+    int option = JOptionPane.showConfirmDialog(frame, editPanel, "Edit Post", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    if (option == JOptionPane.OK_OPTION) {
+        String newContent = textArea.getText().trim();
+        // If the text is empty and the post has no image, confirm deletion
+        if (newContent.isEmpty() && post.getImagePath() == null) {
+            int confirm = JOptionPane.showConfirmDialog(frame, "If you leave the content empty, the post will be deleted. Do you want to continue?");
+            if (confirm == JOptionPane.YES_OPTION) {
+                user.postManager.deletePost(user.postManager.getPosts().indexOf(post));
+                refreshPosts();
+                return;
+            } else {
+                // Reopen the edit dialog if the user cancels
+                editPost(post);
+                return;
+            }
+        }
+
+        // Update the content and modification date if content is changed
+        if (!newContent.equals(post.getContent())) {
+            post.setContent(newContent);
+            post.setLastModifiedDate(new Date());
+        }
+        
+        user.postManager.updateAllPostsFromPosts();
+        user.postManager.savePostsToFile();  // Save the updated posts
+        selectedImagePath = null;  // Reset the selected image path
+        postImageLabel.setIcon(null);  // Clear the image label
+        refreshPosts();  // Refresh the posts display
+    }
+}
+    
+    private void deletePost(Post post) {
+    // Confirm deletion of the post
+    int confirm = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete this post?");
+    if (confirm == JOptionPane.YES_OPTION) {
+        // Delete the post from the manager and refresh the posts display
+        user.postManager.deletePost(user.postManager.getPosts().indexOf(post));
+        user.postManager.updateAllPostsFromPosts();
+        user.postManager.savePostsToFile();  // Save the updated posts
+        refreshPosts();
+    }
+    }
+    
     private void createStory() {
         if (selectedImagePath == null) {
             showMessage("Please choose an image for the story.");
@@ -240,8 +421,9 @@ public class SocialMediaApp {
         storyCard.setLayout(new BoxLayout(storyCard, BoxLayout.Y_AXIS));
         storyCard.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         storyCard.setPreferredSize(new Dimension(300, 200));
-        JLabel contentLabel = new JLabel("Story by " + story.getUserId());
+        JLabel contentLabel = new JLabel(">> " + story.getUsername());
         contentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentLabel.setBackground(Color.DARK_GRAY);
         storyCard.add(contentLabel);
         if (story.getImagePath() != null) {
             ImageIcon imageIcon = new ImageIcon(new ImageIcon(story.getImagePath()).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
@@ -256,6 +438,13 @@ public class SocialMediaApp {
         postCard.setLayout(new BoxLayout(postCard, BoxLayout.Y_AXIS));
         postCard.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         postCard.setPreferredSize(new Dimension(300, 200));
+            JLabel usernameLabel = new JLabel(">> " + post.getUsername());
+    usernameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    usernameLabel.setBackground(Color.DARK_GRAY);
+    usernameLabel.setOpaque(true);
+    usernameLabel.setForeground(Color.WHITE);
+    usernameLabel.setFont(new Font("Arial", Font.BOLD, 12));
+    postCard.add(usernameLabel);
         JLabel contentLabel = new JLabel(post.getContent());
         contentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         postCard.add(contentLabel);
@@ -264,6 +453,14 @@ public class SocialMediaApp {
             JLabel postImageLabel = new JLabel(imageIcon);
             postCard.add(postImageLabel);
         }
+  String dateText = "Created on: " + formatDateTime(post.getCreationDate());
+if (post.getLastModifiedDate() != null && !post.getCreationDate().equals(post.getLastModifiedDate())) {
+    dateText += " | Last modified on: " + formatDateTime(post.getLastModifiedDate());
+}
+JLabel dateLabel = new JLabel(dateText);
+dateLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+postCard.add(dateLabel);
         return postCard;
     }
 
@@ -271,11 +468,14 @@ public class SocialMediaApp {
         JOptionPane.showMessageDialog(frame, message);
     }
 
-    private String formatDate(Date date) {
+    private static String formatDateTime(Date date) {
+    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    return formatter.format(date);
+}
+private static String formatDate(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         return formatter.format(date);
     }
-
     public static void main(String[] args) {
 //        new SocialMediaApp();  // Launch the app
     }
