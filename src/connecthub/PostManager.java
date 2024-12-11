@@ -22,7 +22,7 @@ public class PostManager {
         this.posts = new ArrayList<>();
         this.allPosts = new ArrayList<>();
         this.fileManager = new FileManager();
-        loadPostsFromFile2();
+        loadPostsFromFile();
         loadAllPostsFromFile();
 //        System.out.println(posts.size());
     }
@@ -47,6 +47,13 @@ public class PostManager {
 
     public void deletePost(int postIndex) {
         if (postIndex >= 0 && postIndex < posts.size()) {
+            Post deletedPost = posts.get(postIndex);
+            System.out.println(deletedPost.getContentId());
+            for (Post post : allPosts){
+                if (post.getContentId().equals(deletedPost.getContentId())){
+                    allPosts.remove(post);  break;
+                }
+            }
             posts.remove(postIndex);
             savePostsToFile();
         }
@@ -54,6 +61,25 @@ public class PostManager {
 
 public ArrayList<Post> getPosts() {
         return posts;
+    }
+
+public void updateAllPostsFromPosts() {
+    if (allPosts == null || posts == null) {
+        return; // Safety check: Ensure lists are not null
+    }
+
+    for (Post postInPosts : posts) {
+        // Find the corresponding post in allPosts by ID
+        for (int i = 0; i < allPosts.size(); i++) {
+            Post postInAllPosts = allPosts.get(i);
+
+            if (postInAllPosts.getContentId().equals(postInPosts.getContentId())) {
+                // Update the post in allPosts
+                allPosts.set(i, postInPosts);
+//                break; // Exit inner loop once the match is found and updated
+            }
+        }
+    }
     }
     
 public static void savePostsToFile() {
@@ -104,7 +130,7 @@ public static void savePostsToFile() {
 
     /////////////////////////////////////////////////////////////////////////
     
-        private void loadPostsFromFile2() {
+        private void loadPostsFromFile() {
     try {
         JSONArray postsJson = fileManager.readPosts();
         for (Object obj : postsJson) {
@@ -164,16 +190,22 @@ public ArrayList<Post> getPostsByUser(String userId) {
     return userPosts;
 }
 
-public ArrayList<Post> getPostsByFriends(List<String> friendsIds) {
+public ArrayList<Post> getPostsByFriends(List<String> friendsEmails) {
     ArrayList<Post> friendsPosts = new ArrayList<>();
-    for (Post post : posts) {
-        if (friendsIds.contains(post.getUserId())) {
+    ConnectHubEngine c = new ConnectHubEngine();
+    UserAccountManagement userAccountManagement = new UserAccountManagement(c);
+    
+    for (Post post : allPosts) {
+        if (friendsEmails.contains( userAccountManagement.getEmailByID( post.getUserId() ) )) {
             friendsPosts.add(post);
         }
     }
+    
+    c = null;
+    userAccountManagement=null;
+
     return friendsPosts;
 
-
-}
+    }
 
 }

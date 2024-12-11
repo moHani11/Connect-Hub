@@ -30,24 +30,20 @@ import java.util.Set;
 public class UserAccountManagement {
     public Map<String, User> userDatabase = new HashMap<>(); // Mock file-based database
     private ConnectHubEngine cEngine;
-    private static final String DATABASE_FILE = "userDatabase.json"; // Path to JSON file
-    private final Gson gson = new Gson();
     
     public UserAccountManagement(ConnectHubEngine c){
-//        this.userDatabase = userDatabase;
-//        loadDatabase(); // 7amo ----------------------------------------
         this.cEngine = c;
         c.loadData(this);
-        c.populateUserDatabase(this);
     }
+    
     public void sendFriendRequest(String senderEmail, String receiverEmail) {
     User sender = userDatabase.get(senderEmail);
     User receiver = userDatabase.get(receiverEmail);
-
     if (sender != null && receiver != null && !senderEmail.equals(receiverEmail)) {
         // Add sender to receiver's friend request list
         receiver.getFriendRequests().add(senderEmail);
 //        saveDatabase();  // Save after updating the request
+        cEngine.saveData(this);
     }
 }
 
@@ -65,7 +61,7 @@ public class UserAccountManagement {
         friendUser.getFriendRequests().remove(currentUserEmail);
 
         // Save the updated data back to the file
-//        saveDatabase();
+    cEngine.saveData(this);
     }
 }
 
@@ -79,7 +75,7 @@ public class UserAccountManagement {
         friendUser.getFriendRequests().remove(currentUserEmail);
 
         // Save the updated data back to the file
-//        saveDatabase();
+        cEngine.saveData(this);
     }
 }
 
@@ -94,31 +90,45 @@ public class UserAccountManagement {
                 friend.removeFriend(email);
             }
         }
+        cEngine.saveData(this);
     }
     // Method to block a user
     public void blockUser(String currentUserEmail, String targetUserEmail) {
-        User currentUser = userDatabase.get(currentUserEmail);
-        User targetUser = userDatabase.get(targetUserEmail);
-        
-        if (currentUser != null && targetUser != null) {
-            // Add target user to the current user's blocked list
-            currentUser.getBlockedUsers().add(targetUserEmail);
-            // Remove target user from the current user's friends list
-            currentUser.getFriends().remove(targetUserEmail);
-//            saveDatabase(); // Save after modifying
-        }
+    User currentUser = userDatabase.get(currentUserEmail);
+    User targetUser = userDatabase.get(targetUserEmail);
+
+    if (currentUser != null && targetUser != null) {
+        // Add target user to the current user's blocked list
+        currentUser.getBlockedUsers().add(targetUserEmail);
+        // Remove target user from the current user's friend list
+        currentUser.getFriends().remove(targetUserEmail);
+
+        // Remove current user from the target user's friend list
+        targetUser.getFriends().remove(currentUserEmail);
+
+        // Remove any pending friend requests between the two users
+        currentUser.getFriendRequests().remove(targetUserEmail);
+        targetUser.getFriendRequests().remove(currentUserEmail);
+
+        cEngine.saveData(this);
     }
+}
+
        // Method to unblock a user
-    public void unblockUser(String currentUserEmail, String targetUserEmail) {
-        User currentUser = userDatabase.get(currentUserEmail);
-        User targetUser = userDatabase.get(targetUserEmail);
-        
-        if (currentUser != null && targetUser != null) {
-            // Remove target user from the blocked list
-            currentUser.getBlockedUsers().remove(targetUserEmail);
-//            saveDatabase(); // Save after modifying
-        }
+public void unblockUser(String currentUserEmail, String targetUserEmail) {
+    User currentUser = userDatabase.get(currentUserEmail);
+    User targetUser = userDatabase.get(targetUserEmail);
+
+    if (currentUser != null && targetUser != null) {
+        // Remove target user from the blocked list
+        currentUser.getBlockedUsers().remove(targetUserEmail);
+
+        // Do not re-add the target user to the friend list automatically
+
+        cEngine.saveData(this);
     }
+}
+
     public Set<String> getFriendRequests(String email) {
         User user = userDatabase.get(email);
         return user != null ? user.getFriendRequests() : new HashSet<>();
@@ -133,7 +143,26 @@ public class UserAccountManagement {
     }
     return null; // Return null if no matching user is found
 }
-     // Get a user's list of friends
+
+    public String getEmailByID(String userID) {
+    for (User user : userDatabase.values()) {
+        if (user.getUserId().equals(userID)) {
+            return user.getEmail();
+        }
+    }
+    return null; // Return null if no matching user is found
+}    
+    
+   public String getUsernameByID(String userID) {
+    for (User user : userDatabase.values()) {
+        if (user.getUserId().equals(userID)) {
+            return user.getUsername();
+        }
+    }
+    return null; // Return null if no matching user is found
+}  
+
+// Get a user's list of friends
     public Set<String> getFriends(String email) {
         User user = userDatabase.get(email);
         return user != null ? user.getFriends() : new HashSet<>();
@@ -236,7 +265,9 @@ public Map<String, String> getAllUsernames() {
         String hashedPassword = hashPassword(password);  // Hash the password
         User user = new User(userId, email, username, hashedPassword, dateOfBirth);
         userDatabase.put(email, user);  // Store the user in the database
-//        saveDatabase(); //7amoo --------------------------------
+
+cEngine.saveData(this);
+
     }
     // Method to log in a user
     public User login(String email, String password) throws NoSuchAlgorithmException {
@@ -245,8 +276,9 @@ public Map<String, String> getAllUsernames() {
             user.setOnline(true);
             System.out.println("User logged in successfully! Username: " + user.getUsername());
 
-//        saveDatabase(); // Save the updated user data after login
-            return user;
+cEngine.saveData(this);
+
+return user;
         }
         System.out.println("Login failed for email: " + email);
         return null;
@@ -259,44 +291,17 @@ public Map<String, String> getAllUsernames() {
         User user = userDatabase.get(email);
         if (user != null) {
             user.setOnline(false);
-//            saveDatabase(); // Save the updated user data after logout
+cEngine.saveData(this);
+
         }
     }
-private void saveDatabase() {
-    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(DATABASE_FILE))) {
-        out.writeObject(userDatabase); // Serialize the userDatabase map
-        System.out.println("Database saved successfully to " + DATABASE_FILE);
-    } catch (IOException e) {
-        System.err.println("Error saving database to file: " + e.getMessage());
-        e.printStackTrace(); // Print stack trace for detailed debugging
-        throw new RuntimeException("Failed to save database to file.", e);
-    }
-}
+    
+    
 
 // Load database from a binary file
 @SuppressWarnings("unchecked")
-private void loadDatabase() {
-    try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(DATABASE_FILE))) {
-        userDatabase = (Map<String, User>) in.readObject(); // Deserialize the map
 
-        // Handle null database
-        if (userDatabase == null) {
-            userDatabase = new HashMap<>();
-            System.out.println("Database was empty. Initialized with an empty map.");
-        } else {
-            System.out.println("Database loaded successfully from " + DATABASE_FILE);
-        }
-    } catch (FileNotFoundException e) {
-        // Handle the case where the file doesn't exist
-        userDatabase = new HashMap<>();
-        System.out.println("Database file not found. Initialized with an empty map.");
-    } catch (IOException | ClassNotFoundException e) {
-        System.err.println("Error loading database from file: " + e.getMessage());
-        e.printStackTrace(); // Print stack trace for detailed debugging
-        throw new RuntimeException("Failed to load database from file.", e);
-    }
-}
-    // Validate email format
+// Validate email format
    private boolean validateEmail(String email) {
     // Regex to check the email format
     String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*" +  // Local part before "@"

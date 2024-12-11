@@ -7,8 +7,12 @@ package connecthub;
 import connecthub.ProfileManager;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.border.LineBorder;
 
 /**
  *
@@ -16,14 +20,27 @@ import javax.swing.JOptionPane;
  */
 public class ProfileGUI extends javax.swing.JFrame {
 
+    private User currUser;
     private ProfileManager manager;
-    public ProfileGUI(ProfileManager manager) {
-        
+    private boolean access;
+    public ProfileGUI(User user, ProfileManager manager, boolean access) {
+      
+        this.currUser = user;
         this.manager = manager;
-                
+        this.access = access;
+
         setTitle("Profile");
         setSize(1000, 500);
         initComponents();
+        
+        if (!access){
+                    jButton1.setVisible(false);
+                    jButton2.setVisible(false);
+                    jButton3.setVisible(false);
+                    jButton4.setVisible(false);
+
+                }
+        
         setLocationRelativeTo(null);
         setLayout(null);
         String ProfilePath = manager.getProfilePhoto();
@@ -54,6 +71,9 @@ public class ProfileGUI extends javax.swing.JFrame {
                 profileImageFrame1.repaint();
                 manager.updateprofilephoto(selectedFilePath);
             }
+            
+                this.manager.saveToFile(JsonDataManger.PROFILES_FILE_NAME);
+
         });
                                                   // الكود عند الضغط على زرار تغيير الكوفر فوتو
         jButton1.addActionListener(e -> {
@@ -71,6 +91,7 @@ public class ProfileGUI extends javax.swing.JFrame {
                 coverImageFrame1.repaint();
                 manager.updateCoverPhoto(selectedFilePath);
             }
+                this.manager.saveToFile(JsonDataManger.PROFILES_FILE_NAME);
         });
                                                              // عرض البايو
         jLabel1.setText(manager.getUsername());
@@ -80,28 +101,34 @@ public class ProfileGUI extends javax.swing.JFrame {
             String newBio = JOptionPane.showInputDialog("Enter New Bio");
             manager.updateBio(newBio);
             jLabel2.setText("Bio : " + manager.getBio());
+ this.manager.saveToFile(JsonDataManger.PROFILES_FILE_NAME);
+
         });
         
         
                                                            // عرض الاصدقاء
         
 jPanel2.removeAll(); 
-JLabel friendsLabel = new JLabel("Friends");
+JLabel friendsLabel = new JLabel(" Friends");
 friendsLabel.setFont(new Font("Arial", Font.BOLD, 18));  // تعيين الخط ليكون بحجم 18 وبالخط العريض
 friendsLabel.setForeground(Color.WHITE);  // تعيين اللون الأبيض للنص
 jPanel2.add(friendsLabel);  // إضافة الـ JLabel إلى الـ JPanel
 
 
-// جلب الأصدقاء من ProfileManager
-for (String friend : manager.getFriends()) {
+    ConnectHubEngine c = new ConnectHubEngine();
+    UserAccountManagement userAccountManagement = new UserAccountManagement(c);
+    
+    Set<String> friendsEmails = manager.user.getFriends();
+    for (String email : friendsEmails) {
     // إنشاء JLabel لكل صديق
-    JLabel friendLabel = new JLabel(friend);
+    String friendUserName = userAccountManagement.getUsernameByEmail(email);
+    JLabel friendLabel = new JLabel(" >> " + friendUserName);
     jPanel2.add(friendLabel);  // إضافة الصديق إلى اللوحة
-}
+    }
 //  ترتيب الأصدقاء عموديً
 jPanel2.setPreferredSize(new Dimension(289, 260));
 jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.Y_AXIS));
-
+jPanel2.setBorder(new LineBorder(Color.BLACK));
 jPanel2.repaint();     // إعادة رسم المكونات
                                                                  //خلص عرض الاصدقاء
     
@@ -119,6 +146,8 @@ jPanel3.add(friendsPostsLabel);  // إضافة الـ JLabel إلى الـ JPane
 jPanel3.setPreferredSize(new Dimension(680, 292));
 jPanel3.setLayout(new BoxLayout(jPanel3, BoxLayout.Y_AXIS));
 // إعادة رسم الـ JPanel بعد التحديث
+jPanel3.setBorder(new LineBorder(Color.BLACK));
+
 jPanel3.repaint();  
 
 
@@ -148,6 +177,39 @@ jButton4.addActionListener(e -> {
         } else {
             manager.updatePassword(pass2);
             JOptionPane.showMessageDialog(null, "Password changed successfully!", "Save Success", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    this.manager.saveToFile(JsonDataManger.PROFILES_FILE_NAME);
+    
+});
+
+
+    
+            JFrame frame = this;
+       frame.addWindowListener(new WindowAdapter() {
+    @Override
+    public void windowClosing(WindowEvent e) {
+        // Custom action on close
+        int response = JOptionPane.showConfirmDialog(
+                frame,
+                "Are you sure you want to leave Connect Hub?",
+                "Confirm Close",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+        if (response == JOptionPane.YES_OPTION) {
+            // Perform logout or any other necessary cleanup
+            ConnectHubEngine c = new ConnectHubEngine();
+            UserAccountManagement userAccountManagement = new UserAccountManagement(c);
+            
+            userAccountManagement.logout(user.getEmail());
+            System.out.println("Logout");
+            
+            frame.dispose(); // Close the window
+        } else {
+            // Do nothing to ensure the window remains open
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }
     }
 });
@@ -351,46 +413,14 @@ jButton4.addActionListener(e -> {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         this.setVisible(false);
-        NewsFeed n = new NewsFeed(manager.user);
+        NewsFeed n = new NewsFeed(currUser);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProfileGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProfileGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProfileGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProfileGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-//        ProfileManager manager = new ProfileManager();
-//        manager.AddTempData();
-        
-//        ProfileGUI p = new ProfileGUI(manager);
-//        p.setVisible(true);
-        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new ProfileGUI(manager).setVisible(true);
-//            }
-//        });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

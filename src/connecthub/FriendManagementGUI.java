@@ -2,11 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-<<<<<<< HEAD:src/connecthub/FriendManagementGUI.java
 package connecthub;
-=======
-package connecthup;
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagementGUI.java
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.Map;
@@ -14,14 +10,7 @@ import java.util.Set;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
-<<<<<<< HEAD:src/connecthub/FriendManagementGUI.java
 
-=======
-/**
- *
- * @author mohamed
- */
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagementGUI.java
 public class FriendManagementGUI extends javax.swing.JFrame {
  private UserAccountManagement userAccountManagement;
     private FriendManagement friendManagement;
@@ -53,7 +42,6 @@ public class FriendManagementGUI extends javax.swing.JFrame {
         }
         friendsuggestionlist.setModel(model);
     }
-<<<<<<< HEAD:src/connecthub/FriendManagementGUI.java
       public void loadFriendRequests() {
     DefaultListModel<String> model = new DefaultListModel<>();
     
@@ -70,16 +58,6 @@ public class FriendManagementGUI extends javax.swing.JFrame {
         }
     }friendrequestlist.setModel(model);
 }
-=======
-      private void loadFriendRequests() {
-        DefaultListModel<String> model = new DefaultListModel<>();
-        Set<String> requests = friendManagement.getFriendRequests(currentUserEmail); // Get friend requests
-        for (String senderEmail : requests) {
-            model.addElement(userAccountManagement.getUsernameByEmail(senderEmail)); // Display usernames
-        }
-        friendrequestlist.setModel(model); // Update the friend requests list
-    }
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagementGUI.java
      private void loadFriendList() {
         DefaultListModel<String> model = new DefaultListModel<>();
         for (String email : userAccountManagement.getFriends(currentUserEmail)) {
@@ -313,7 +291,6 @@ public class FriendManagementGUI extends javax.swing.JFrame {
 
     private void AddfriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddfriendActionPerformed
      String username = friendsuggestionlist.getSelectedValue();
-<<<<<<< HEAD:src/connecthub/FriendManagementGUI.java
     if (username != null) {
         // Get the email of the selected user
         String email = userAccountManagement.getEmailByUsername(username);
@@ -327,14 +304,6 @@ public class FriendManagementGUI extends javax.swing.JFrame {
         // Optionally, you can also show a success message
         JOptionPane.showMessageDialog(this, "Friend request sent to " + username + "!");
     }
-=======
-        if (username != null) {
-            String email = userAccountManagement.getEmailByUsername(username);
-            friendManagement.sendFriendRequest(currentUserEmail, email);
-            JOptionPane.showMessageDialog(this, "Friend request sent!");
-            loadFriendSuggestions();
-        }
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/FriendManagementGUI.java
     }//GEN-LAST:event_AddfriendActionPerformed
 
     private void AcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcceptActionPerformed

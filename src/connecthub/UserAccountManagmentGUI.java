@@ -30,6 +30,8 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         Login = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -37,7 +39,13 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         Email = new javax.swing.JTextField();
         Password = new javax.swing.JPasswordField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -50,7 +58,7 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
                 LoginActionPerformed(evt);
             }
         });
-        getContentPane().add(Login, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 370, 130, 20));
+        getContentPane().add(Login, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 370, 130, 20));
 
         jLabel2.setFont(new java.awt.Font("Segoe Print", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -82,10 +90,20 @@ public class UserAccountManagmentGUI extends javax.swing.JFrame {
                 EmailActionPerformed(evt);
             }
         });
-        getContentPane().add(Email, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 280, 230, 30));
+        getContentPane().add(Email, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 280, 240, 30));
 
         Password.setBackground(new java.awt.Color(204, 204, 204));
-        getContentPane().add(Password, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 320, 230, 30));
+        getContentPane().add(Password, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 320, 240, 30));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Password :");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 100, 30));
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Email :");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 280, 80, 30));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connecthub/360_F_691051962_GFhQPOAXABmf7l706q89b2PFh6FnB1kI.jpg"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 550));
@@ -114,15 +132,8 @@ if (password.isEmpty()) {
             if (loggedInUser != null) {
                 JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + email + "!");
                 this.setVisible(false); // Hide login frame
-<<<<<<< HEAD:src/connecthub/UserAccountManagmentGUI.java
                 NewsFeed userFeed = new NewsFeed(loggedInUser);
                 
-=======
-                FriendManagement friendManagement = new FriendManagement(userAccountManagement);
-                
-                // Pass this frame to the Logout frame to allow switching back to the login
-              new Logout(this, userAccountManagement, email,friendManagement).setVisible(true);  // Show logout frame and pass current frame
->>>>>>> cfe010f572d5ad6d25053bf1ec28d3883df0df75:src/connecthup/UserAccountManagmentGUI.java
             } else {
                 JOptionPane.showMessageDialog(this, "Login failed. Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -161,5 +172,9 @@ if (password.isEmpty()) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }
