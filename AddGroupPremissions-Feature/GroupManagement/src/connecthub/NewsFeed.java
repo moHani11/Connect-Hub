@@ -2,7 +2,6 @@
 
 package connecthub;
 
-import connecthub.Post;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -312,34 +311,7 @@ frame.addWindowListener(new WindowAdapter() {
                 this.setVisible(false);
                 friendsList.setVisible(true);
 
-//       if (friendsPanelViewed){
-//           this.friendsPanel.setVisible(false);
-//            this.getLayeredPane().remove(friendsPanel);
-//           friendsPanelViewed = false;
-//       }
-//       if (explorePanelViewed){
-//           this.explorePanel.setVisible(false);
-//            this.getLayeredPane().remove(explorePanel);
-//           explorePanelViewed = false;
-//       }
-//       else{
-//        this.explorePanel = this.updateExplorePanel();
-//        
-//        this.getLayeredPane().add(explorePanel, JLayeredPane.PALETTE_LAYER);
-//        
-//        this.addComponentListener(new java.awt.event.ComponentAdapter() {
-//            @Override
-//            public void componentResized(java.awt.event.ComponentEvent evt) {
-//                // Dynamically adjust the panel's position
-//                int newX = getWidth() - explorePanel.getWidth() - 20;
-//                int newY = PROPERTIES_PANEL_HEIGHT + 23;
-//                explorePanel.setLocation(newX, newY);
-//            }
-//        });
-//        
-//        this.setVisible(true);
-//        explorePanelViewed = true;
-//       }
+
 
     }//GEN-LAST:event_jButton5ActionPerformed
 

@@ -4,7 +4,6 @@
  */
 package connecthub;
 
-import connecthub.ProfileManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
