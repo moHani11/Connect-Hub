@@ -4,7 +4,9 @@
  */
 package connecthub;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.json.simple.JSONObject;
 import org.json.simple.*;
@@ -25,6 +27,9 @@ import org.json.simple.*;
         private Set<String> friendRequests = new HashSet<>();
         private Set<String> blockedUsers = new HashSet<>();
         private UserAccountManagement userAccountManagement;
+        private boolean isAdmin;
+    private boolean isPrimaryAdmin;
+    private List<String> joinedGroups;
 
         public User() {
         }
@@ -39,6 +44,9 @@ import org.json.simple.*;
             this.password = password;
             this.dateOfBirth = dateOfBirth;
             this.isOnline = false;
+             this.isAdmin = false;
+        this.isPrimaryAdmin = false;
+        this.joinedGroups = new ArrayList<>();
         }
 
         public String getEmail(){
@@ -111,6 +119,48 @@ public void addFriend(String email) {
             this.blockedUsers.remove(email);
         }
         
+        
+        // new methods
+        //----------------//
+         public void joinGroup(String groupName) {
+        if (!joinedGroups.contains(groupName)) {
+            joinedGroups.add(groupName);
+        }
+    }
+
+    public void leaveGroup(String groupName) {
+        joinedGroups.remove(groupName);
+    }
+
+    public boolean isGroupAdmin(String groupName) {
+        return isAdmin && joinedGroups.contains(groupName);
+    }
+
+    public List<String> getJoinedGroups() {
+        return joinedGroups;
+    }
+    
+     // Getter and Setter for isAdmin
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    // Getter and Setter for isPrimaryAdmin
+    public boolean isPrimaryAdmin() {
+        return isPrimaryAdmin;
+    }
+
+    public void setPrimaryAdmin(boolean isPrimaryAdmin) {
+        this.isPrimaryAdmin = isPrimaryAdmin;
+    }
+    
+   // -------------------------//
+    
+    
         public JSONObject toJson() {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("userId", userId);

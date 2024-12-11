@@ -83,4 +83,7 @@ public class Group {
     public Date getCreationDate() {
         return creationDate;
     }
+    public void addPost(Post post) {
+        this.posts.add(post);
+    }
 }
