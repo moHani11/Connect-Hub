@@ -31,6 +31,9 @@ public class UserAccountManagement {
     public Map<String, User> userDatabase = new HashMap<>(); // Mock file-based database
     private ConnectHubEngine cEngine;
     
+    public Map<String, User> getUserDatabase() {
+        return userDatabase;
+    }
     public UserAccountManagement(ConnectHubEngine c){
         this.cEngine = c;
         c.loadData(this);
@@ -332,3 +335,4 @@ cEngine.saveData(this);
         return hexString.toString();
     }
 }
+ 
