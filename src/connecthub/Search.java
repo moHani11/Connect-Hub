@@ -3,7 +3,6 @@ package connecthub;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.GroupLayout;
 
 public class Search {
 
@@ -25,13 +24,15 @@ public class Search {
         }
         return matchingUsers;
     }
-/*    public List<GroupLayout.Group> searchGroups(String query) {
-    List<GroupLayout.Group> results = new ArrayList<>();
-    for (GroupLayout.Group group : groupDatabase.values()) { // let i have `groupDatabase`
-        if (group.getName().toLowerCase().contains(query.toLowerCase())) {
-            results.add(group);
+
+    // Method to search groups by name
+    public List<Group> searchGroupsByName(String query) {
+        List<Group> matchingGroups = new ArrayList<>();
+        for (Group group : GroupManager.getAllGroups()) {
+            if (group.getName().toLowerCase().contains(query.toLowerCase())) {
+                matchingGroups.add(group);
+            }
         }
+        return matchingGroups;
     }
-    return results;
-} */
 }

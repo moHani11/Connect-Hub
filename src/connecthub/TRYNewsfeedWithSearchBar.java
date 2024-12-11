@@ -56,66 +56,97 @@ public class TRYNewsfeedWithSearchBar extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
-    private void performSearch(String query) {
-        if (userAccountManagement == null) {
-            JOptionPane.showMessageDialog(this, "User account management is not initialized.");
-            return;
-        }
-
-        Search search = new Search(userAccountManagement);
-        List<User> results = search.searchUsersByUsername(query);
-
-        // Filter out the logged-in user from the results
-        results.removeIf(result -> result.getEmail().equals(user.getEmail()));
-
-        // If no results, show a message that user doesn't exist
-        if (results.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "User not found", "Search Result", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        // Display results in a new JFrame
-        JFrame resultsFrame = new JFrame("Search Results");
-        resultsFrame.setSize(400, 300);
-        resultsFrame.setLayout(new GridLayout(results.size(), 1));
-
-        for (User result : results) {
-            JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            userPanel.add(new JLabel(result.getUsername()));
-
-            // Add buttons only if the result is not the logged-in user
-            if (!result.getEmail().equals(user.getEmail())) {
-                JButton viewProfileButton = new JButton("View Profile");
-                JButton addFriendButton = new JButton("Add Friend");
-                JButton blockUserButton = new JButton("Block");
-                JButton removeFriendButton = new JButton("Remove Friend");
-
-                // Check if the current user has already sent a friend request
-                if ((requestStatus.containsKey(result.getEmail()) && requestStatus.get(result.getEmail()).equals("Pending"))||
-              userAccountManagement.getFriendRequests(result.getEmail()).contains(currentUserEmail)) {
-                    addFriendButton.setText("Pending");
-                    addFriendButton.setEnabled(false); // Disable the button once it's pending
-                }
-
-                // Add actions to buttons
-                viewProfileButton.addActionListener(e -> viewProfile(result, resultsFrame));
-                addFriendButton.addActionListener(e -> addFriend(result, addFriendButton));  // Modified to pass the button
-                blockUserButton.addActionListener(e -> blockUser(result));
-                removeFriendButton.addActionListener(e -> removeFriend(result));
-
-                userPanel.add(viewProfileButton);
-                userPanel.add(addFriendButton);
-                userPanel.add(blockUserButton);
-                userPanel.add(removeFriendButton);
-            }
-
-            resultsFrame.add(userPanel);
-        }
-
-        resultsFrame.setLocationRelativeTo(this);
-        resultsFrame.setVisible(true);
+private void performSearch(String query) {
+    if (userAccountManagement == null) {
+        JOptionPane.showMessageDialog(this, "User account management is not initialized.");
+        return;
     }
+
+    // Search for users
+    Search search = new Search(userAccountManagement);
+    List<User> userResults = search.searchUsersByUsername(query);
+
+    // Search for groups
+    List<Group> groupResults = search.searchGroupsByName(query);
+
+    // Filter out the logged-in user from the userResults
+    userResults.removeIf(result -> result.getEmail().equals(user.getEmail()));
+// If no results, show a message that users or groups don't exist
+    if (userResults.isEmpty() && groupResults.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "No results found", "Search Result", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+
+    // Create result panels for users and groups
+    JFrame resultsFrame = new JFrame("Search Results");
+    resultsFrame.setSize(400, 300);
+    resultsFrame.setLayout(new GridLayout(userResults.size() + groupResults.size(), 1));
+
+    // Display users
+    for (User result : userResults) {
+        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        userPanel.add(new JLabel(result.getUsername()));
+
+        // Add action buttons for the user
+        JButton viewProfileButton = new JButton("View Profile");
+        JButton addFriendButton = new JButton("Add Friend");
+        JButton blockUserButton = new JButton("Block");
+        JButton removeFriendButton = new JButton("Remove Friend");
+
+        // Check if the current user has already sent a friend request
+        if ((requestStatus.containsKey(result.getEmail()) && requestStatus.get(result.getEmail()).equals("Pending")) ||
+            userAccountManagement.getFriendRequests(result.getEmail()).contains(currentUserEmail)) {
+            addFriendButton.setText("Pending");
+            addFriendButton.setEnabled(false); // Disable the button once it's pending
+        }
+
+        // Add actions to buttons
+        viewProfileButton.addActionListener(e -> viewProfile(result, resultsFrame));
+        addFriendButton.addActionListener(e -> addFriend(result, addFriendButton));
+        blockUserButton.addActionListener(e -> blockUser(result));
+        removeFriendButton.addActionListener(e -> removeFriend(result));
+
+        userPanel.add(viewProfileButton);
+        userPanel.add(addFriendButton);
+        userPanel.add(blockUserButton);
+        userPanel.add(removeFriendButton);
+
+        resultsFrame.add(userPanel);
+    }
+
+    // Display groups
+    for (Group result : groupResults) {
+        JPanel groupPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        groupPanel.add(new JLabel(result.getName()));
+
+        JButton joinGroupButton = new JButton("Join Group");
+        JButton leaveGroupButton = new JButton("Leave Group");
+        JButton viewGroupButton = new JButton("View Group");
+
+        // If the user is already a member, disable Join Group button and show Leave Group
+        if (result.getMemberIds().contains(user.getEmail())) {
+            joinGroupButton.setEnabled(false);
+            leaveGroupButton.setEnabled(true);
+        } else {
+            joinGroupButton.setEnabled(true);
+            leaveGroupButton.setEnabled(false);
+        }
+
+        // Add actions to buttons
+        joinGroupButton.addActionListener(e -> joinGroup(result, joinGroupButton));
+        leaveGroupButton.addActionListener(e -> leaveGroup(result, leaveGroupButton));
+        viewGroupButton.addActionListener(e -> viewGroup(result));
+
+        groupPanel.add(joinGroupButton);
+        groupPanel.add(leaveGroupButton);
+        groupPanel.add(viewGroupButton);
+
+        resultsFrame.add(groupPanel);
+    }
+
+    resultsFrame.setLocationRelativeTo(this);
+    resultsFrame.setVisible(true);
+}
 
 // View Profile Action
 private void viewProfile(User selectedUser, JFrame resultsFrame) {
@@ -189,6 +220,42 @@ private void viewProfile(User selectedUser, JFrame resultsFrame) {
         // Refresh the UI (reload friend list and blocked users)
         refreshUI();
     }
+    
+    // Join Group Action
+    private void joinGroup(Group group, JButton joinGroupButton) {
+        if (!group.getMemberIds().contains(user.getEmail())) {
+            group.getMemberIds().add(user.getEmail());
+            JOptionPane.showMessageDialog(this, "You have joined the group: " + group.getName());
+
+            // Disable the join button and enable leave button
+            joinGroupButton.setEnabled(false);
+
+            // Refresh the UI
+            refreshUI();
+        }
+    }
+
+    // Leave Group Action
+     private void leaveGroup(Group group, JButton leaveGroupButton) {
+        if (group.getMemberIds().contains(user.getEmail())) {
+            group.getMemberIds().remove(user.getEmail());
+            JOptionPane.showMessageDialog(this, "You have left the group: " + group.getName());
+
+            // Disable the leave button and enable join button
+            leaveGroupButton.setEnabled(false);
+
+            // Refresh the UI
+            refreshUI();
+        }
+    }
+
+    // View Group Action
+      private void viewGroup(Group group) {
+        // Open a view for the group and its posts
+        JOptionPane.showMessageDialog(this, "Viewing Group: " + group.getName());
+        // You can create a group details page if necessary
+    }
+
 
     // Refresh the Friend Suggestions, Friend List, and Blocked Users in TRYNewsfeedWithSearchBar
     private void refreshUI() {
