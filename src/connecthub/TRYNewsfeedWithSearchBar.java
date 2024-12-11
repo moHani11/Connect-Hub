@@ -2,17 +2,20 @@ package connecthub;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TRYNewsfeedWithSearchBar extends JFrame {
     private User user;
     private UserAccountManagement userAccountManagement;
+    private String currentUserEmail;
+    // To track pending friend requests
+    private Map<String, String> requestStatus = new HashMap<>(); // Email -> "Pending"
 
-    // Constructor for News Feed
     public TRYNewsfeedWithSearchBar(User user, UserAccountManagement userAccountManagement) {
         this.user = user;
         this.userAccountManagement = userAccountManagement;
-
         initUI();
     }
 
@@ -23,14 +26,17 @@ public class TRYNewsfeedWithSearchBar extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Top Panel for Search
+        JPanel topPanel = new JPanel(new BorderLayout());
         JPanel searchPanel = new JPanel(new BorderLayout());
         JTextField searchBar = new JTextField();
         JButton searchButton = new JButton("Search");
+        JButton backButton = new JButton("Back");
 
         searchPanel.add(searchBar, BorderLayout.CENTER);
         searchPanel.add(searchButton, BorderLayout.EAST);
-        add(searchPanel, BorderLayout.NORTH);
+        topPanel.add(searchPanel, BorderLayout.CENTER);
+        topPanel.add(backButton, BorderLayout.WEST);
+        add(topPanel, BorderLayout.NORTH);
 
         // Search Action
         searchButton.addActionListener(e -> {
@@ -40,14 +46,28 @@ public class TRYNewsfeedWithSearchBar extends JFrame {
             }
         });
 
+        // Back Action
+        backButton.addActionListener(e -> {
+            // Close this frame and return to the News Feed
+            this.setVisible(false);
+            new NewsFeed(user).setVisible(true);
+        });
+
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    // Perform search functionality
     private void performSearch(String query) {
+        if (userAccountManagement == null) {
+            JOptionPane.showMessageDialog(this, "User account management is not initialized.");
+            return;
+        }
+
         Search search = new Search(userAccountManagement);
         List<User> results = search.searchUsersByUsername(query);
+
+        // Filter out the logged-in user from the results
+        results.removeIf(result -> result.getEmail().equals(user.getEmail()));
 
         // If no results, show a message that user doesn't exist
         if (results.isEmpty()) {
@@ -63,21 +83,32 @@ public class TRYNewsfeedWithSearchBar extends JFrame {
         for (User result : results) {
             JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             userPanel.add(new JLabel(result.getUsername()));
-            JButton viewProfileButton = new JButton("View Profile");
-            JButton addFriendButton = new JButton("Add Friend");
-            JButton blockUserButton = new JButton("Block");
-            JButton removeFriendButton = new JButton("Remove Friend");
 
-            // Add actions to buttons
-            viewProfileButton.addActionListener(e -> viewProfile(result));
-            addFriendButton.addActionListener(e -> addFriend(result));
-            blockUserButton.addActionListener(e -> blockUser(result));
-            removeFriendButton.addActionListener(e -> removeFriend(result));
+            // Add buttons only if the result is not the logged-in user
+            if (!result.getEmail().equals(user.getEmail())) {
+                JButton viewProfileButton = new JButton("View Profile");
+                JButton addFriendButton = new JButton("Add Friend");
+                JButton blockUserButton = new JButton("Block");
+                JButton removeFriendButton = new JButton("Remove Friend");
 
-            userPanel.add(viewProfileButton);
-            userPanel.add(addFriendButton);
-            userPanel.add(blockUserButton);
-            userPanel.add(removeFriendButton);
+                // Check if the current user has already sent a friend request
+                if ((requestStatus.containsKey(result.getEmail()) && requestStatus.get(result.getEmail()).equals("Pending"))||
+              userAccountManagement.getFriendRequests(result.getEmail()).contains(currentUserEmail)) {
+                    addFriendButton.setText("Pending");
+                    addFriendButton.setEnabled(false); // Disable the button once it's pending
+                }
+
+                // Add actions to buttons
+                viewProfileButton.addActionListener(e -> viewProfile(result, resultsFrame));
+                addFriendButton.addActionListener(e -> addFriend(result, addFriendButton));  // Modified to pass the button
+                blockUserButton.addActionListener(e -> blockUser(result));
+                removeFriendButton.addActionListener(e -> removeFriend(result));
+
+                userPanel.add(viewProfileButton);
+                userPanel.add(addFriendButton);
+                userPanel.add(blockUserButton);
+                userPanel.add(removeFriendButton);
+            }
 
             resultsFrame.add(userPanel);
         }
@@ -86,22 +117,49 @@ public class TRYNewsfeedWithSearchBar extends JFrame {
         resultsFrame.setVisible(true);
     }
 
-    // View Profile Action
-    private void viewProfile(User user) {
-        JOptionPane.showMessageDialog(this, "Viewing profile of " + user.getUsername());
+// View Profile Action
+private void viewProfile(User selectedUser, JFrame resultsFrame) {
+    if (selectedUser == null) {
+        JOptionPane.showMessageDialog(this, "Invalid user profile.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
     }
 
-    // Add Friend Action
-    private void addFriend(User otherUser) {
+    // Close the results frame before opening the profile
+    if (resultsFrame != null) {
+        resultsFrame.dispose();  // Close the search results window
+    }
+
+    // Close the current NewsFeed window (this frame)
+    this.dispose(); // Close the current NewsFeed window
+
+    // Check if it's the logged-in user (currUser) or another user
+    boolean canEdit = user.getEmail().equals(selectedUser.getEmail()); // Can edit if it's the logged-in user
+
+    // Open the ProfileGUI for the selected user
+    ProfileManager profileManager = new ProfileManager(selectedUser);
+    ProfileGUI profileGUI = new ProfileGUI(selectedUser, profileManager, canEdit);  // Can edit if logged-in user
+    profileGUI.setVisible(true); // Open the profile window for the selected user
+}
+
+    private void addFriend(User otherUser, JButton addFriendButton) {
         // Check if the user is already friends
         if (user.getFriends().contains(otherUser.getEmail())) {
             JOptionPane.showMessageDialog(this, "You are already friends with " + otherUser.getUsername());
         } else {
             // Add friend request
             userAccountManagement.sendFriendRequest(user.getEmail(), otherUser.getEmail());
+
+            // Mark the request as "Pending"
+            requestStatus.put(otherUser.getEmail(), "Pending");
+
+            // Update the button text and disable it to show the request is "Pending"
+            addFriendButton.setText("Pending");
+            addFriendButton.setEnabled(false);
+
             JOptionPane.showMessageDialog(this, "Friend request sent to " + otherUser.getUsername());
         }
 
+        // Refresh the UI to reflect changes
         refreshUI();
     }
 

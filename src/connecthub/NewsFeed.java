@@ -1,5 +1,3 @@
-
-
 package connecthub;
 
 import connecthub.Post;
@@ -28,7 +26,8 @@ public class NewsFeed extends javax.swing.JFrame {
     
     ArrayList<JPanel> postss;    
     private User user;
-private UserAccountManagement userAccountManagement;
+    ConnectHubEngine c = new ConnectHubEngine();
+    UserAccountManagement userAccountManagement = new UserAccountManagement(c);
     int FRAME_HEIGHT = 700;
     int PROPERTIES_PANEL_HEIGHT = 40;
     int STORIES_PANEL_HEIGHT = 100;
