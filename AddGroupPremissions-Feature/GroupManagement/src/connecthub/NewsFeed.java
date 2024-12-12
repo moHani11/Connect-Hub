@@ -1,7 +1,6 @@
-
-
 package connecthub;
 
+import connecthub.Post;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,7 +26,8 @@ public class NewsFeed extends javax.swing.JFrame {
     
     ArrayList<JPanel> postss;    
     private User user;
-
+    ConnectHubEngine c = new ConnectHubEngine();
+    UserAccountManagement userAccountManagement = new UserAccountManagement(c);
     int FRAME_HEIGHT = 700;
     int PROPERTIES_PANEL_HEIGHT = 40;
     int STORIES_PANEL_HEIGHT = 100;
@@ -36,49 +36,42 @@ public class NewsFeed extends javax.swing.JFrame {
     JPanel friendsPanel = null;
     boolean explorePanelViewed = false;
     JPanel explorePanel = null;
-    
     public NewsFeed(User user) {
-        this.setLocation(400,120);
-        this.user = user;
-        generateFeedPosts();
-        
-        initComponents();
+    this.setLocation(400, 120);
+    this.user = user;
+    generateFeedPosts();
 
-         postsFeed();
-         storiesFeed();
-        this.setVisible(true);
-        JFrame frame = this;
-        
-frame.addWindowListener(new WindowAdapter() {
-    @Override
-    public void windowClosing(WindowEvent e) {
-        // Custom action on close
-        int response = JOptionPane.showConfirmDialog(
-                frame,
-                "Are you sure you want to leave Connect Hub?",
-                "Confirm Close",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-        );
-        if (response == JOptionPane.YES_OPTION) {
-            // Perform logout or any other necessary cleanup
-            ConnectHubEngine c = new ConnectHubEngine();
-            UserAccountManagement userAccountManagement = new UserAccountManagement(c);
-            
-            userAccountManagement.logout(user.getEmail());
-            System.out.println("Logout");
-            
-            frame.dispose(); // Close the window
-        } else {
-            // Do nothing to ensure the window remains open
-            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    initComponents();
+       // Add the search bar to panel
+    postsFeed();
+    storiesFeed();
+    this.setVisible(true);
+
+    JFrame frame = this;
+    frame.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            int response = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Are you sure you want to leave Connect Hub?",
+                    "Confirm Close",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+            if (response == JOptionPane.YES_OPTION) {
+                ConnectHubEngine c = new ConnectHubEngine();
+                UserAccountManagement userAccountManagement = new UserAccountManagement(c);
+
+                userAccountManagement.logout(user.getEmail());
+                System.out.println("Logout");
+
+                frame.dispose(); // Close the window
+            } else {
+                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            }
         }
-    }
-});
-
-    }
-    
-
+    });
+}
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -92,6 +85,7 @@ frame.addWindowListener(new WindowAdapter() {
         jButton5 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
+        search = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(200, 0, 242));
@@ -178,6 +172,16 @@ frame.addWindowListener(new WindowAdapter() {
             }
         });
 
+        search.setBackground(new java.awt.Color(198, 231, 231));
+        search.setFont(new java.awt.Font("Segoe UI Black", 2, 14)); // NOI18N
+        search.setText("search");
+        search.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -187,11 +191,13 @@ frame.addWindowListener(new WindowAdapter() {
                 .addComponent(jButton9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(160, 160, 160)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48)
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 268, Short.MAX_VALUE)
                 .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,7 +216,8 @@ frame.addWindowListener(new WindowAdapter() {
                         .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -311,35 +318,6 @@ frame.addWindowListener(new WindowAdapter() {
                 this.setVisible(false);
                 friendsList.setVisible(true);
 
-//       if (friendsPanelViewed){
-//           this.friendsPanel.setVisible(false);
-//            this.getLayeredPane().remove(friendsPanel);
-//           friendsPanelViewed = false;
-//       }
-//       if (explorePanelViewed){
-//           this.explorePanel.setVisible(false);
-//            this.getLayeredPane().remove(explorePanel);
-//           explorePanelViewed = false;
-//       }
-//       else{
-//        this.explorePanel = this.updateExplorePanel();
-//        
-//        this.getLayeredPane().add(explorePanel, JLayeredPane.PALETTE_LAYER);
-//        
-//        this.addComponentListener(new java.awt.event.ComponentAdapter() {
-//            @Override
-//            public void componentResized(java.awt.event.ComponentEvent evt) {
-//                // Dynamically adjust the panel's position
-//                int newX = getWidth() - explorePanel.getWidth() - 20;
-//                int newY = PROPERTIES_PANEL_HEIGHT + 23;
-//                explorePanel.setLocation(newX, newY);
-//            }
-//        });
-//        
-//        this.setVisible(true);
-//        explorePanelViewed = true;
-//       }
-
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
@@ -364,7 +342,13 @@ frame.addWindowListener(new WindowAdapter() {
         newsFeed.setVisible(true);
     }//GEN-LAST:event_jButton10ActionPerformed
 
-    
+    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
+       // When the search button is clicked, open TRYNewsfeedWithSearchBar
+        TRYNewsfeedWithSearchBar newsFeedWithSearchBar = new TRYNewsfeedWithSearchBar(user, userAccountManagement);
+        this.setVisible(false);  // Hide the current frame
+        newsFeedWithSearchBar.setVisible(true);  // Show the new frame
+    }//GEN-LAST:event_searchActionPerformed
+
     public JPanel updateFriendsPanel(){
 
         int panel_width = 220;
@@ -390,7 +374,6 @@ frame.addWindowListener(new WindowAdapter() {
         friendsPanel.add(new JLabel("\n"));
         friendsPanel.add(new JLabel("\n"));
         // Add each friend's name to the panel
-
 
     for (String email : friendsSet) {
         User friend = userAccountManagement.userDatabase.get(email);
@@ -433,12 +416,7 @@ frame.addWindowListener(new WindowAdapter() {
 
   
     public JPanel updateExplorePanel(){
-//        exploreFriends.add("zaid");
-//        exploreFriends.add("Ebrahim");
-//        exploreFriends.add("Yehya");
-
-        
-        int panel_width = 300;
+      int panel_width = 300;
         int panel_height = FRAME_HEIGHT;
 
         JPanel explorePanel = new JPanel();
@@ -538,25 +516,7 @@ frame.addWindowListener(new WindowAdapter() {
         });
             return unaddButton;
     }
-  
-    
-//    public void generateFeedStories(){
-//        ArrayList<Story> storiesArray = new ArrayList<>();
-////        for (User friend: this.friendss){   
-//             List<String> friendsList = new ArrayList<>(this.user.getFriends());
-//             storiesArray.addAll(friend.storyManager.getStoriesByFriends(friendsList));
-////        }
-//        
-//        this.postss = new ArrayList<>();
-//
-//    for (Post post : postsArray) {
-//            JPanel panel = SocialMediaApp.createPostCard(post);  // Create card for each post
-//            this.postss.add(panel);
-//        }
-////        postsPanel.revalidate();
-////        postsPanel.repaint();
-//    }
-    
+ 
     public void storiesFeed(){
         jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.X_AXIS)); // 2 rows, 1 columns, 10px gaps
 
@@ -632,33 +592,14 @@ frame.addWindowListener(new WindowAdapter() {
         JPanel panel1 = createPanel("Frame 1", Color.LIGHT_GRAY);
         JPanel panel2 = createPanel("Frame 2", Color.CYAN);
         JPanel panel3 = createPanel("Frame 3", Color.PINK);
-
-        ////////////////////////////////////////////////////////////////
-        
-        
-         ////////////////////////////////////////////////////////////////
-        
+ 
         // Add panels to the main panel
         for (JPanel panel: this.postss) changJPanel.add(panel, "o");
-//        changJPanel.add(panel1, "1");
-//        changJPanel.add(panel2, "2");
-//        changJPanel.add(panel3, "3");
-
-        changJPanel.setSize(posts_width - 20, posts_height-LIKE_BUTTON_HEIGHT-15);
+     changJPanel.setSize(posts_width - 20, posts_height-LIKE_BUTTON_HEIGHT-15);
         changJPanel.setMaximumSize(new Dimension(posts_width - 20, posts_height-LIKE_BUTTON_HEIGHT-15));
         changJPanel.setBackground(Color.LIGHT_GRAY);
         
 
-//        // Scrollbar to modify the content
-//        JScrollBar scrollBar = new JScrollBar(JScrollBar.VERTICAL, 0, 1, 0, 5); // 5 options
-//        scrollBar.addAdjustmentListener(new AdjustmentListener() {
-//            @Override
-//            public void adjustmentValueChanged(AdjustmentEvent e) {
-//                // Update content based on the scrollbar value
-//                int value = scrollBar.getValue();
-//                contentLabel.setText("Content " + (value + 1));
-//            }
-//        });
 
         JPanel scrollPanel = new JPanel();
         scrollPanel.setMaximumSize(new Dimension(20, posts_height-LIKE_BUTTON_HEIGHT-15));
@@ -669,7 +610,6 @@ frame.addWindowListener(new WindowAdapter() {
         
         upButton.setMaximumSize(new Dimension(20, (posts_height-LIKE_BUTTON_HEIGHT-15)/2 ) );
         downButton.setMaximumSize(new Dimension(20, (posts_height-LIKE_BUTTON_HEIGHT-15)/2) );
-//        
 
                 // Action listeners for the buttons
         upButton.addActionListener(new ActionListener() {
@@ -800,5 +740,6 @@ frame.addWindowListener(new WindowAdapter() {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JButton search;
     // End of variables declaration//GEN-END:variables
 }
