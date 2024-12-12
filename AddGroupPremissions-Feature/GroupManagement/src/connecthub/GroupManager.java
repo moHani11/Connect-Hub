@@ -73,7 +73,7 @@ public class GroupManager {
         }
     }
 
-    public ArrayList<Group> getAllGroups() {
+    public static ArrayList<Group> getAllGroups() {
         return allGroups;
     }
 

@@ -28,8 +28,8 @@ import org.json.simple.*;
         private Set<String> blockedUsers = new HashSet<>();
         private UserAccountManagement userAccountManagement;
         private boolean isAdmin;
-    private boolean isPrimaryAdmin;
-    private List<String> joinedGroups;
+        private boolean isPrimaryAdmin;
+        private List<String> joinedGroups;
 
         public User() {
         }
