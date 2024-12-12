@@ -168,7 +168,7 @@ private void viewProfile(User selectedUser, JFrame resultsFrame) {
 
     // Open the ProfileGUI for the selected user
     ProfileManager profileManager = new ProfileManager(selectedUser);
-    ProfileGUI profileGUI = new ProfileGUI(selectedUser, profileManager, canEdit);  // Can edit if logged-in user
+    ProfileGUI profileGUI = new ProfileGUI(this.user, profileManager, canEdit);  // Can edit if logged-in user
     profileGUI.setVisible(true); // Open the profile window for the selected user
 }
 
