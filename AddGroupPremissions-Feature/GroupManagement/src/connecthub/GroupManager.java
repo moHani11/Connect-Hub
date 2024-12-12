@@ -1,5 +1,4 @@
 package connecthub;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,13 +22,14 @@ public class GroupManager {
     }
 
     public Group createGroup(String name, String description, String groupPhoto, String primaryAdminId) {
-        String groupId = "Group-" + System.currentTimeMillis();
-        Group newGroup = new Group(groupId, name, description, groupPhoto, primaryAdminId);
-        allGroups.add(newGroup);
-        userGroups.put(primaryAdminId, newGroup);
-        saveGroupsToFile();
-        return newGroup;
-    }
+    String groupId = "Group-" + System.currentTimeMillis();
+    Group newGroup = new Group(groupId, name, description, groupPhoto, primaryAdminId);
+    allGroups.add(newGroup);
+    userGroups.put(primaryAdminId, newGroup);
+    saveGroupsToFile();
+    return newGroup;
+}
+
 
     public void addMember(String groupId, String userId) {
         Group group = getGroupById(groupId);
@@ -89,15 +89,12 @@ public class GroupManager {
 
     public ArrayList<Post> getAllPosts(String userId) {
         ArrayList<Post> allPosts = new ArrayList<>();
-
         // Add posts from user's groups
         for (Group group : getUserGroups(userId)) {
             allPosts.addAll(group.getPosts());
         }
-
         // Sort posts by date (newest first)
         Collections.sort(allPosts, Comparator.comparing(Post::getCreationDate).reversed());
-
         return allPosts;
     }
 
@@ -118,25 +115,87 @@ public class GroupManager {
         return null;
     }
 
-    private void saveGroupsToFile() {
-        Gson gson = new Gson();
-        try (FileWriter writer = new FileWriter(FILE_NAME)) {
-            gson.toJson(allGroups, writer);
-        } catch (IOException e) {
-            System.err.println("Error saving groups to file: " + e.getMessage());
+    public void approveMembership(String groupId, String userId, String adminUserId) {
+        Group group = getGroupById(groupId);
+        if (group != null && group.getAdminIds().contains(adminUserId)) {
+            if (!group.getMemberIds().contains(userId)) {
+                group.getMemberIds().add(userId);
+                saveGroupsToFile();
+            }
         }
     }
 
-    private void loadGroupsFromFile() {
-        Gson gson = new Gson();
-        try (FileReader reader = new FileReader(FILE_NAME)) {
-            Type groupListType = new TypeToken<ArrayList<Group>>() {}.getType();
-            allGroups = gson.fromJson(reader, groupListType);
-            if (allGroups == null) {
-                allGroups = new ArrayList<>();
+    public void removePost(String groupId, String postId) {
+        Group group = getGroupById(groupId);
+        if (group != null) {
+            Post postToRemove = null;
+            for (Post post : group.getPosts()) {
+                if (post.getContentId().equals(postId)) {
+                    postToRemove = post;
+                    break;
+                }
             }
-        } catch (IOException e) {
-            System.err.println("Error loading groups from file: " + e.getMessage());
+            if (postToRemove != null) {
+                group.getPosts().remove(postToRemove);
+                saveGroupsToFile();
+            }
         }
     }
+    public void updatePostInGroup(String groupId, Post post) {
+    Group group = getGroupById(groupId);
+    if (group != null) {
+        
+        for (int i = 0; i < group.getPosts().size(); i++) {
+            if (group.getPosts().get(i).getContentId().equals(post.getContentId())) {
+                group.getPosts().set(i, post); 
+                break;
+            }
+        }
+        saveGroupsToFile();
+    }
+}
+public void deletePostFromGroup(String groupId, String contentId) {
+    Group group = getGroupById(groupId);
+    if (group != null) {
+        
+        for (Post post : group.getPosts()) {
+            if (post.getContentId().equals(contentId)) {
+                group.getPosts().remove(post);
+                saveGroupsToFile();
+                break; 
+            }
+        }
+    }
+}
+    
+    public ArrayList<Post> getPostsInGroup(String groupId) {
+    Group group = getGroupById(groupId);
+    if (group != null) {
+        return group.getPosts();
+    }
+    return new ArrayList<>(); 
+    }
+    private void saveGroupsToFile() {
+    Gson gson = new Gson();
+    try (FileWriter writer = new FileWriter(FILE_NAME)) {
+        
+        gson.toJson(allGroups, writer);
+    } catch (IOException e) {
+        System.err.println("Error saving groups to file: " + e.getMessage());
+    }
+}
+
+
+    private void loadGroupsFromFile() {
+    Gson gson = new Gson();
+    try (FileReader reader = new FileReader(FILE_NAME)) {
+        Type groupListType = new TypeToken<ArrayList<Group>>() {}.getType();
+        allGroups = gson.fromJson(reader, groupListType);
+        if (allGroups == null) {
+            allGroups = new ArrayList<>();
+        }
+    } catch (IOException e) {
+        System.err.println("Error loading groups from file: " + e.getMessage());
+    }
+}
 }
