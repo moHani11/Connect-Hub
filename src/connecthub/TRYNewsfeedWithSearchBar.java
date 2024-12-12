@@ -95,7 +95,7 @@ private void performSearch(String query) {
 
         // Check if the current user has already sent a friend request
         if ((requestStatus.containsKey(result.getEmail()) && requestStatus.get(result.getEmail()).equals("Pending")) ||
-            userAccountManagement.getFriendRequests(result.getEmail()).contains(currentUserEmail)) {
+            userAccountManagement.getFriendRequests(result.getEmail()).contains(user.getEmail())) {
             addFriendButton.setText("Pending");
             addFriendButton.setEnabled(false); // Disable the button once it's pending
         }
