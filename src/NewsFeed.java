@@ -365,8 +365,9 @@ public class NewsFeed extends javax.swing.JFrame {
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         
+        this.setVisible(false);
         GroupManager groupManager = new GroupManager();
-        new GroupManagementGUI(groupManager, user);
+        new GroupManagementGUI2(groupManager, user);
         
     }//GEN-LAST:event_jButton11ActionPerformed
 
