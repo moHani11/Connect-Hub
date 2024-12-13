@@ -94,6 +94,7 @@ public class NotificationsGUI extends javax.swing.JFrame {
                         // إزالة الإشعار والزر "Mark as Read" فقط
                         jPanel1.remove(NotiLabel1);
                         jPanel1.remove(markAsReadButton);
+                        jPanel1.remove(openFriendsButton);
                         manager.deleteNotification(noti.getNotificationId());
                         jLabel2.setText("Number of Unread Notification : " + String.valueOf(manager.getNotificationsForUser(user.getEmail()).size()));
 
