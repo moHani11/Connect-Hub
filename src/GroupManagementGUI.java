@@ -24,8 +24,9 @@ public class GroupManagementGUI {
         frame = new JFrame("Group Management");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 700);
+        frame.setLocation(400, 120);
         frame.setLayout(new BorderLayout());
-
+        
         // Panels
         mainPanel = new JPanel(new BorderLayout());
         groupListPanel = new JPanel();
@@ -36,8 +37,20 @@ public class GroupManagementGUI {
         // Adding Components
         JLabel title = new JLabel("My Groups", JLabel.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
+        
+        JButton backToFeed = new JButton("Back To Feed");
+       backToFeed.addActionListener(new ActionListener() {
+               @Override
+               public void actionPerformed(ActionEvent e) {
+                   frame.setVisible(false);
+                   NewsFeed n = new NewsFeed(currentUser);
+           }
+           });
+        backToFeed.setVisible(true);
+        mainPanel.add(backToFeed, BorderLayout.WEST); // Button at the bottom
         mainPanel.add(title, BorderLayout.NORTH);
 
+        
         JButton createGroupButton = new JButton("Create New Group");
         createGroupButton.addActionListener(e -> createGroupDialog());
         groupActionPanel.add(createGroupButton);

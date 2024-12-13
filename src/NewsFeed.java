@@ -185,7 +185,7 @@ public class NewsFeed extends javax.swing.JFrame {
 
         jButton11.setBackground(new java.awt.Color(198, 231, 231));
         jButton11.setFont(new java.awt.Font("Segoe UI Black", 2, 14)); // NOI18N
-        jButton11.setText("Gps");
+        jButton11.setText("Groups");
         jButton11.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -208,8 +208,8 @@ public class NewsFeed extends javax.swing.JFrame {
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
-                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
+                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
@@ -367,7 +367,7 @@ public class NewsFeed extends javax.swing.JFrame {
         
         this.setVisible(false);
         GroupManager groupManager = new GroupManager();
-        new GroupManagementGUI2(groupManager, user);
+        new GroupManagementGUI(groupManager, user);
         
     }//GEN-LAST:event_jButton11ActionPerformed
 

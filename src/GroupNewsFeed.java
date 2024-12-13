@@ -7,6 +7,8 @@ package connecthub;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +22,8 @@ public class GroupNewsFeed extends javax.swing.JFrame {
 
     GroupManager groupManager;
     User currentUser;
-    Group currentGroup;    
+    Group currentGroup;   
+    JFrame viewFrame = new JFrame("Group properties");
     
     public GroupNewsFeed(User currentUser, String GroupId) {
         
@@ -102,9 +105,9 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         
     }
     
-    public JFrame createGroupPanel(String groupTitle, String description, ArrayList<String> members) {
+    public void createGroupPanel(String groupTitle, String description, ArrayList<String> members) {
         // Create the main panel that will contain all components
-        
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add some padding
@@ -113,21 +116,21 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel titleLabel = new JLabel(groupTitle);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Set big font for title
-        JButton manageButton = new JButton("Manage Group");
         
         // Add title label and button to the header panel
         headerPanel.add(titleLabel);
-        headerPanel.add(manageButton);
         headerPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Add border to the header panel
+        headerPanel.setMaximumSize(new Dimension(350,600));
         
         // Add header panel to the main panel
         mainPanel.add(headerPanel);
         
         // Description panel
-        JPanel descriptionPanel = new JPanel();
+        JPanel descriptionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.Y_AXIS));
-        JLabel descriptionLabel = new JLabel("<html>" + description + "</html>"); // HTML to allow line breaks
+        JLabel descriptionLabel = new JLabel("Group Desicription: " + description);
         descriptionPanel.add(descriptionLabel);
+        headerPanel.setMaximumSize(new Dimension(350,800));
         descriptionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Add border to the description panel
         
         // Add description panel to the main panel
@@ -137,17 +140,81 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         JPanel membersPanel = new JPanel();
         membersPanel.setLayout(new BoxLayout(membersPanel, BoxLayout.Y_AXIS));
         
+        String primaryID = this.currentGroup.getPrimaryAdminId();
+        ArrayList<String> adminIDs = this.currentGroup.getAdminIds();
+        ArrayList<String> memberIDs = this.currentGroup.getMemberIds();
+        
+        ConnectHubEngine c = new ConnectHubEngine();
+        UserAccountManagement userAccountManagement = new UserAccountManagement(c);
+        
+        User primaryUser = userAccountManagement.getUserByEmail( userAccountManagement.getEmailByID(primaryID) );
+        
+        JPanel primaryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel primaryLabel = new JLabel("Primary Admin: " + primaryUser.getUsername() +" (" +primaryUser.getstatus()+ ")");
+        JButton primaryButton = new JButton("View Account");
+        
+        primaryButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    viewFrame.setVisible(false);
+            ProfileManager p = new ProfileManager(primaryUser);
+            ProfileGUI pGUI = new ProfileGUI(currentUser, p, true);
+            setVisible(false);
+            pGUI.setVisible(true);                }
+            });
+        
+            primaryPanel.add(primaryLabel);
+            primaryPanel.add(primaryButton);
+            primaryPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+            membersPanel.add(primaryPanel);
+        
+        JLabel adminstitle = new JLabel("Admins: ");
+        
+        membersPanel.add(adminstitle);
+        
+        for (String adminID: adminIDs){
+        
+            User adminUser = userAccountManagement.getUserByEmail( userAccountManagement.getEmailByID(adminID) );
+        
+        JPanel adminPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel adminLabel = new JLabel("Admin: " + adminUser.getUsername() +" (" +adminUser.getstatus()+ ")");
+        JButton adminButton = new JButton("View Account");
+            
+                    adminButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    viewFrame.setVisible(false);
+            ProfileManager p = new ProfileManager(adminUser);
+            ProfileGUI pGUI = new ProfileGUI(currentUser, p, true);
+            setVisible(false);
+            pGUI.setVisible(true);                }
+            });
+        
+            adminPanel.add(adminLabel);
+            adminPanel.add(adminButton);
+            membersPanel.add(adminPanel);
+        }
+        
+        JLabel memberTitle = new JLabel("Members: ");
+        membersPanel.add(memberTitle);
         // Add a panel for each member with a button
-        for (String member : members) {
-            JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JLabel memberLabel = new JLabel(member);
-            JButton memberButton = new JButton("View");
+        
+        for (String member : memberIDs) {
+ 
+        User memberUser = userAccountManagement.getUserByEmail( userAccountManagement.getEmailByID(member) );
+            
+        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel memberLabel = new JLabel("member: " + memberUser.getUsername() +" (" +memberUser.getstatus()+ ")");
+        JButton memberButton = new JButton("View Profile");
             
             memberButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showMessageDialog(mainPanel, "View member: ");
-                }
+                    viewFrame.setVisible(false);
+            ProfileManager p = new ProfileManager(memberUser);
+            ProfileGUI pGUI = new ProfileGUI(currentUser, p, true);
+            setVisible(false);
+            pGUI.setVisible(true);                }
             });
 
             // Add member label and button to the member panel
@@ -162,23 +229,28 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         
         // Add JScrollPane to the main panel
         mainPanel.add(membersScrollPane);
-        
-        // Handle button actions (for example purposes)
-        manageButton.addActionListener(new ActionListener() {
+                
+        viewFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        viewFrame.setSize(500, 700);
+        viewFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Only close this frame
+
+        viewFrame.addWindowListener(new WindowAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(mainPanel, "Manage group functionality");
+            public void windowClosing(WindowEvent e) {
+                // Execute your specific function here
+
+                // After handling your function, dispose the frame
+//                viewFrame.dispose();
+                viewFrame = new JFrame("Group Properties");
             }
         });
-                
-        JFrame frame = new JFrame("Group Properties");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 700);
+        viewFrame.add(mainPanel);       
+        viewFrame.setLocation(400, 120);
+
         
-        // Add the group panel to the frame
-        frame.add(mainPanel);
-        
-        return frame;
+        viewFrame.setVisible(true);
+//        setVisible(false);
+   
     }
     
     private void postInGroup(Group group) {
@@ -382,9 +454,8 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         members.add("Alice Johnson");
         members.add("Bob Brown");
         
-        JFrame viewGP = createGroupPanel(title, description, members);
-//        this.setVisible(false);
-        viewGP.setVisible(true);
+        createGroupPanel(title, description, members);
+        
     }//GEN-LAST:event_jButton7ActionPerformed
 
     public static void main(String args[]) {
