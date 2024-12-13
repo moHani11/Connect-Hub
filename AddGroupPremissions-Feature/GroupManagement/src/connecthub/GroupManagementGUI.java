@@ -13,19 +13,22 @@ public class GroupManagementGUI {
     private JPanel mainPanel, groupListPanel, groupActionPanel;
     private GroupManager groupManager;
     private User currentUser;
+    private UserAccountManagement userManager;
 
-    public GroupManagementGUI(GroupManager groupManager, User currentUser) {
+    public GroupManagementGUI(GroupManager groupManager,UserAccountManagement userManager ,User currentUser) {
         this.groupManager = groupManager;
         this.currentUser = currentUser;
+        this.userManager = userManager;
         initialize();
     }
 
     private void initialize() {
         frame = new JFrame("Group Management");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200, 800);
+        frame.setSize(1000, 700);
+        frame.setLocation(400, 120);
         frame.setLayout(new BorderLayout());
-
+        
         // Panels
         mainPanel = new JPanel(new BorderLayout());
         groupListPanel = new JPanel();
@@ -36,8 +39,20 @@ public class GroupManagementGUI {
         // Adding Components
         JLabel title = new JLabel("My Groups", JLabel.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
+        
+        JButton backToFeed = new JButton("Back To Feed");
+       backToFeed.addActionListener(new ActionListener() {
+               @Override
+               public void actionPerformed(ActionEvent e) {
+                   frame.setVisible(false);
+                   NewsFeed n = new NewsFeed(currentUser);
+           }
+           });
+        backToFeed.setVisible(true);
+        mainPanel.add(backToFeed, BorderLayout.WEST); // Button at the bottom
         mainPanel.add(title, BorderLayout.NORTH);
 
+        
         JButton createGroupButton = new JButton("Create New Group");
         createGroupButton.addActionListener(e -> createGroupDialog());
         groupActionPanel.add(createGroupButton);
@@ -49,7 +64,7 @@ public class GroupManagementGUI {
         
           JButton manageGroupButton = new JButton("Manage Groups");
         manageGroupButton.addActionListener(e -> manageGroupDialog());
-        groupActionPanel.add(manageGroupButton);
+//        groupActionPanel.add(manageGroupButton);
 
         mainPanel.add(groupActionPanel, BorderLayout.SOUTH);
         refreshGroupList();
@@ -100,33 +115,38 @@ public class GroupManagementGUI {
 
         return joinableGroups;
     }
-private void refreshGroupList() {
+
+    private void refreshGroupList() {
     groupListPanel.removeAll(); // Clear previous group list
     ArrayList<Group> userGroups = groupManager.getUserGroups(currentUser.getUserId());
-    for (Group group : userGroups) {
-        JPanel groupPanel = new JPanel();
-        groupPanel.setLayout(new BoxLayout(groupPanel, BoxLayout.Y_AXIS));
 
-        // Group image
-        JLabel groupImageLabel = new JLabel();
-        ImageIcon groupImageIcon = new ImageIcon(group.getGroupPhoto());
-        Image image = groupImageIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        groupImageLabel.setIcon(new ImageIcon(image));
-        groupPanel.add(groupImageLabel);
+            for (Group group : userGroups) {
+            JPanel groupPanel = new JPanel();
+            groupPanel.setLayout(new BoxLayout(groupPanel, BoxLayout.Y_AXIS));
 
-        // Group name
-        JLabel groupLabel = new JLabel(group.getName());
-        groupLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        groupPanel.add(groupLabel);
+            JLabel groupImageLabel = new JLabel();
+            ImageIcon groupImageIcon = new ImageIcon(group.getGroupPhoto());
+            Image image = groupImageIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+            groupImageLabel.setIcon(new ImageIcon(image));
+            groupPanel.add(groupImageLabel, BorderLayout.WEST);
 
-        // Group description
-        JLabel groupDescLabel = new JLabel(group.getDescription());
-        groupDescLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        groupPanel.add(groupDescLabel);
+            JLabel groupLabel = new JLabel("Group Name: " + group.getName());
+            groupLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+            groupLabel.setBorder(BorderFactory.createEtchedBorder());
+            groupLabel.setBackground(Color.LIGHT_GRAY);
+            groupPanel.add(groupLabel);
+            
 
-        // Action Button
-        JButton actionButton = new JButton("Leave Group");
-        actionButton.addActionListener(e -> {
+            JLabel groupDescLabel = new JLabel("Group description: " + group.getDescription());
+            groupDescLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            groupDescLabel.setBackground(Color.DARK_GRAY);
+            groupPanel.add(groupDescLabel);
+
+            // Action Button
+                    
+            JButton leaveButton = new JButton("Leave Group");
+            leaveButton.addActionListener(e -> {
+
             groupManager.removeMember(group.getGroupId(), currentUser.getUserId());
             JOptionPane.showMessageDialog(frame, "You left the group: " + group.getName());
 
@@ -137,11 +157,34 @@ private void refreshGroupList() {
             groupListPanel.remove(groupPanel);
             groupListPanel.revalidate();
             groupListPanel.repaint();
-        });
-
-        groupPanel.add(actionButton);
-        groupListPanel.add(groupPanel);
-    }
+                
+            });
+            
+            JButton openButton = new JButton("Open Group");
+            openButton.addActionListener(e -> {
+                frame.setVisible(false);
+                GroupNewsFeed gpFeed = new GroupNewsFeed(currentUser, group.getGroupId());
+                refreshGroupList(); // Refresh group list after leaving
+            });
+            
+            JButton ManageButton = new JButton("Manage Group");
+            ManageButton.addActionListener(e -> {
+                manageGroupActions(group);
+                refreshGroupList(); // Refresh group list after leaving
+            });
+            
+            JPanel buttonsPanel = new JPanel();
+            buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
+            
+            buttonsPanel.add(leaveButton);
+            buttonsPanel.add(openButton);
+            buttonsPanel.add(ManageButton);
+            
+            groupPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY,4));
+            groupPanel.add(buttonsPanel);
+            
+            groupListPanel.add(groupPanel);
+        }
 
     // Remove old JScrollPane if exists
     Component[] components = mainPanel.getComponents();
@@ -247,15 +290,17 @@ private void refreshGroupList() {
     manageLabel.setFont(new Font("Arial", Font.BOLD, 18));
     manageDialog.add(manageLabel, BorderLayout.NORTH);
     JPanel actionPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-
+    
     if (currentUser.getUserId().equals(group.getPrimaryAdminId())) {
         // Primary Admin actions
         JButton promoteButton = new JButton("Promote Member");
         promoteButton.addActionListener(e -> promoteMember(group));
         actionPanel.add(promoteButton);
+        
         JButton demoteButton = new JButton("Demote Admin");
         demoteButton.addActionListener(e -> demoteAdmin(group));
         actionPanel.add(demoteButton);
+        
         JButton deleteButton = new JButton("Delete Group");
         deleteButton.addActionListener(e -> {
             groupManager.deleteGroup(group.getGroupId(), currentUser.getUserId());
@@ -269,6 +314,7 @@ private void refreshGroupList() {
         JButton managePostsButton = new JButton("Manage Posts");
         managePostsButton.addActionListener(e -> managePosts(group));
         actionPanel.add(managePostsButton);
+        
         JButton removeMemberButton = new JButton("Remove Member");
         removeMemberButton.addActionListener(e -> removeMember(group));
         actionPanel.add(removeMemberButton);
@@ -282,6 +328,7 @@ private void refreshGroupList() {
             refreshGroupList();
         });
         actionPanel.add(leaveGroupButton);
+        
         JButton postButton = new JButton("Post in Group");
         postButton.addActionListener(e -> postInGroup(group));
         actionPanel.add(postButton);
@@ -295,10 +342,12 @@ private void refreshGroupList() {
             refreshGroupList();
         });
         actionPanel.add(joinGroupButton);
+        
         JButton postButton = new JButton("Post in Group");
         postButton.addActionListener(e -> postInGroup(group));
         actionPanel.add(postButton);
     }
+    
     manageDialog.add(actionPanel, BorderLayout.CENTER);
     manageDialog.setVisible(true);
 }
@@ -374,21 +423,62 @@ private void refreshGroupList() {
         }
     }
 
-    private void promoteMember(Group group) {
-        String memberId = JOptionPane.showInputDialog(frame, "Enter Member ID to Promote:");
-        if (memberId != null && !memberId.trim().isEmpty()) {
-            groupManager.promoteToAdmin(group.getGroupId(), memberId);
-            JOptionPane.showMessageDialog(frame, "Member Promoted");
+  private void promoteMember(Group group) {
+    JDialog dialog = new JDialog(frame, "Promote Member", true);
+    dialog.setSize(400, 300);
+    dialog.setLayout(new BorderLayout());
+    JLabel label = new JLabel("Select a member to promote:", JLabel.CENTER);
+    label.setFont(new Font("Arial", Font.BOLD, 16));
+    dialog.add(label, BorderLayout.NORTH);
+    JPanel membersPanel = new JPanel(new GridLayout(0, 1));
+    for (String memberId : group.getMemberIds()) {
+        if(!group.getAdminIds().contains(memberId)) 
+        {
+        User member = userManager.getUserById(memberId); // استخدام getUserById
+        if (member != null) {
+            JButton memberButton = new JButton(member.getUsername()); 
+            memberButton.addActionListener(e -> {
+                group.promoteToAdmin(memberId); 
+                JOptionPane.showMessageDialog(dialog, "Promoted " + member.getUsername() + " to admin.");
+                groupManager.updateGroup(group);
+                       refreshGroupList();
+                dialog.dispose();
+            });
+            membersPanel.add(memberButton);
         }
     }
-
-    private void demoteAdmin(Group group) {
-        String adminId = JOptionPane.showInputDialog(frame, "Enter Admin ID to Demote:");
-        if (adminId != null && !adminId.trim().isEmpty()) {
-            groupManager.demoteAdmin(group.getGroupId(), adminId);
-            JOptionPane.showMessageDialog(frame, "Admin Demoted");
+    }
+    dialog.add(new JScrollPane(membersPanel), BorderLayout.CENTER);
+    dialog.setVisible(true);
+}
+ 
+private void demoteAdmin(Group group) {
+    JDialog dialog = new JDialog(frame, "Demote Admin", true);
+    dialog.setSize(400, 300);
+    dialog.setLayout(new BorderLayout());
+    JLabel label = new JLabel("Select an admin to demote:", JLabel.CENTER);
+    label.setFont(new Font("Arial", Font.BOLD, 16));
+    dialog.add(label, BorderLayout.NORTH);
+    JPanel adminPanel = new JPanel(new GridLayout(0, 1));
+    for (String adminId : group.getAdminIds()) {
+        if (!adminId.equals(group.getPrimaryAdminId())) { // استثناء الـ Primary Admin
+            User admin = userManager.getUserById(adminId); // استخدام getUserById
+            if (admin != null) {
+                JButton adminButton = new JButton(admin.getUsername());
+                adminButton.addActionListener(e -> {
+                    group.demoteFromAdmin(adminId); 
+                    JOptionPane.showMessageDialog(dialog, "Demoted " + admin.getUsername() + " from admin.");
+                    dialog.dispose();
+                    groupManager.updateGroup(group);
+                       refreshGroupList();
+                });
+                adminPanel.add(adminButton);
+            }
         }
     }
+    dialog.add(new JScrollPane(adminPanel), BorderLayout.CENTER);
+    dialog.setVisible(true);
+}
 
     private void removeMember(Group group) {
         String memberId = JOptionPane.showInputDialog(frame, "Enter Member ID to Remove:");
@@ -398,36 +488,52 @@ private void refreshGroupList() {
         }
     }
 
-    private void postInGroup(Group group) {
-        JDialog postDialog = new JDialog(frame, "Post in Group: " + group.getName(), true);
-        postDialog.setSize(400, 300);
-        JPanel postPanel = new JPanel(new BorderLayout());
+   private void postInGroup(Group group) {
+    JDialog postDialog = new JDialog(frame, "Post in Group: " + group.getName(), true);
+    postDialog.setSize(400, 300);
+    JPanel postPanel = new JPanel(new BorderLayout());
 
-        JTextArea postContent = new JTextArea("Write your post here...");
-        postPanel.add(new JScrollPane(postContent), BorderLayout.CENTER);
+    JTextArea postContent = new JTextArea("Write your post here...");
+    postPanel.add(new JScrollPane(postContent), BorderLayout.CENTER);
 
-        JButton postButton = new JButton("Post");
-        postButton.addActionListener(e -> {
-            String content = postContent.getText().trim();
-            if (!content.isEmpty()) {
-                Post post = new Post(currentUser.getUserId(), content, null, new Date(), "");
-                groupManager.addPostToGroup(group.getGroupId(), post);
-                JOptionPane.showMessageDialog(postDialog, "Post added successfully!");
-                postDialog.dispose();
-            } else {
-                JOptionPane.showMessageDialog(postDialog, "Post content cannot be empty.");
-            }
-        });
+    JButton addImageButton = new JButton("Add Image");
+    String[] imagePath = {null};  // Store image path
 
-        postDialog.add(postPanel, BorderLayout.CENTER);
-        postDialog.add(postButton, BorderLayout.SOUTH);
-        postDialog.setVisible(true);
-    }
+    addImageButton.addActionListener(e -> {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
+        int returnValue = fileChooser.showOpenDialog(postDialog);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            imagePath[0] = fileChooser.getSelectedFile().getAbsolutePath();  // Get the image path
+        }
+    });
+
+    JButton postButton = new JButton("Post");
+    postButton.addActionListener(e -> {
+        String content = postContent.getText().trim();
+        if (!content.isEmpty() || imagePath[0] != null) {
+            Post post = new Post(currentUser.getUserId(), content, imagePath[0], new Date(), "");
+            groupManager.addPostToGroup(group.getGroupId(), post);
+            JOptionPane.showMessageDialog(postDialog, "Post added successfully!");
+            postDialog.dispose();
+        } else {
+            JOptionPane.showMessageDialog(postDialog, "Post content cannot be empty.");
+        }
+    });
+
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.add(addImageButton);
+    buttonPanel.add(postButton);
+
+    postDialog.add(postPanel, BorderLayout.CENTER);
+    postDialog.add(buttonPanel, BorderLayout.SOUTH);
+    postDialog.setVisible(true);
+}
     
 
     public static void main(String[] args) {
         GroupManager groupManager = new GroupManager();
         User currentUser = new User("user1234", "emaill@gmail.com", "mazen", "password", "2000-01-01");
-        new GroupManagementGUI(groupManager, currentUser);
+//        new GroupManagementG  UI(groupManager, currentUser);
     }
 }

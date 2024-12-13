@@ -150,6 +150,15 @@ public void unblockUser(String currentUserEmail, String targetUserEmail) {
     }
     return null; // Return null if no matching user is found
 }  
+   
+   public User getUserById(String userID) {
+    for (User user : userDatabase.values()) {
+        if (user.getUserId().equals(userID)) {
+            return user; // ترجع الكائن User بالكامل
+        }
+    }
+    return null; // ترجع null إذا لم يتم العثور على المستخدم
+}
 
 // Get a user's list of friends
     public Set<String> getFriends(String email) {

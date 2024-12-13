@@ -106,4 +106,23 @@ public class Group {
             this.adminIds.remove(userId);
         }
     }
+    public void addAdmin(String userId) {
+        if (!this.adminIds.contains(userId) && !this.primaryAdminId.equals(userId)) {
+            this.adminIds.add(userId);
+        } else {
+            System.err.println("User is already an admin or is the primary admin.");
+        }
+    }
+
+    // Remove an admin from the group (ensuring primary admin isn't removed)
+    public void removeAdmin(String userId) {
+        if (this.adminIds.contains(userId) && !this.primaryAdminId.equals(userId)) {
+            this.adminIds.remove(userId);
+        } else if (this.primaryAdminId.equals(userId)) {
+            System.err.println("Cannot remove the primary admin.");
+        } else {
+            System.err.println("User is not an admin.");
+        }
+    }
+
 }

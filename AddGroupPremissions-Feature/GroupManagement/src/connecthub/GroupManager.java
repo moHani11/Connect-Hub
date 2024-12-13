@@ -76,6 +76,7 @@ public void removeMember(String groupId, String userId) {
         if (group != null && group.getMemberIds().contains(userId) && !group.getAdminIds().contains(userId)) {
             group.getAdminIds().add(userId);
             saveGroupsToFile();
+            
         }
     }
 
@@ -129,7 +130,7 @@ public void deleteGroup(String groupId, String userId) {
         }
     }
 
-    private Group getGroupById(String groupId) {
+    public Group getGroupById(String groupId) {
         for (Group group : allGroups) {
             if (group.getGroupId().equals(groupId)) {
                 return group;
@@ -222,4 +223,24 @@ public void deletePostFromGroup(String groupId, String contentId) {
         System.err.println("Error loading groups from file: " + e.getMessage());
     }
 }
+    public void updateGroup(Group updatedGroup) {
+    Group group = getGroupById(updatedGroup.getGroupId());
+    if (group != null) {
+        // Update group fields with the new values
+        group.setName(updatedGroup.getName());
+        group.setDescription(updatedGroup.getDescription());
+        group.setGroupPhoto(updatedGroup.getGroupPhoto());
+
+        // Optionally, update any other necessary fields
+        // Example: If the primary admin needs to be updated
+        if (!group.getPrimaryAdminId().equals(updatedGroup.getPrimaryAdminId())) {
+            group.setPrimaryAdminId(updatedGroup.getPrimaryAdminId());
+        }
+
+        saveGroupsToFile();  // Save the updated group list to the file
+    } else {
+        System.err.println("Group not found with ID: " + updatedGroup.getGroupId());
+    }
+}
+    
 }
