@@ -2,14 +2,6 @@ package connecthub;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
 
 public class Group {
     private String groupId;
@@ -60,6 +52,10 @@ public class Group {
         return groupPhoto;
     }
 
+    public void setPrimaryAdminId(String primaryAdminId) {
+        this.primaryAdminId = primaryAdminId;
+    }
+
     public void setGroupPhoto(String groupPhoto) {
         this.groupPhoto = groupPhoto;
     }
@@ -83,7 +79,31 @@ public class Group {
     public Date getCreationDate() {
         return creationDate;
     }
+
     public void addPost(Post post) {
         this.posts.add(post);
+    }
+
+    public void addMember(String userId) {
+        if (!this.memberIds.contains(userId)) {
+            this.memberIds.add(userId);
+        }
+    }
+
+    public void removeMember(String userId) {
+        this.memberIds.remove(userId);
+        this.adminIds.remove(userId);
+    }
+
+    public void promoteToAdmin(String userId) {
+        if (!this.adminIds.contains(userId)) {
+            this.adminIds.add(userId);
+        }
+    }
+
+    public void demoteFromAdmin(String userId) {
+        if (this.adminIds.contains(userId)) {
+            this.adminIds.remove(userId);
+        }
     }
 }

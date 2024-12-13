@@ -61,19 +61,20 @@ public class TRYNewsfeedWithSearchBar extends JFrame {
         JOptionPane.showMessageDialog(this, "User account management is not initialized.");
         return;
     }
-
+  String normalizedQuery = query.trim().toLowerCase();
     // Search for users
     Search search = new Search(userAccountManagement);
     List<User> userResults = search.searchUsersByUsername(query);
 
-    // Search for groups
-    List<Group> groupResults = search.searchGroupsByName(query);
-
+     // Search for groups (case-insensitive comparison)
+    List<Group> groupResults = GroupManager.getAllGroups().stream()
+        .filter(group -> group.getName().toLowerCase().contains(normalizedQuery))
+        .toList();
     // Filter out the logged-in user from the userResults
     userResults.removeIf(result -> result.getEmail().equals(user.getEmail()));
 
     // Filter out blocked users
-    userResults.removeIf(result -> isBlocked(result));
+ userResults.removeIf(this::isBlocked);
 
     // If no results, show a message that users or groups don't exist
     if (userResults.isEmpty() && groupResults.isEmpty()) {
