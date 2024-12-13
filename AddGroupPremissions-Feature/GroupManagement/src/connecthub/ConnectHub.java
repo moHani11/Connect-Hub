@@ -27,11 +27,7 @@ public class ConnectHub {
             UserAccountManagmentGUI uGUI = new UserAccountManagmentGUI(u, c);
 
             c.loadData(u);
-                   
-
-            uGUI.setVisible(true);
-            
-            
+            uGUI.setVisible(true);  
     }
     
-}
+}   

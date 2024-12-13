@@ -4,9 +4,12 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SocialMediaApp {
     private JFrame frame;
@@ -142,7 +145,13 @@ JButton deleteButton = new JButton("Delete");
     private JPanel createStorySection() {
         JPanel panel = new JPanel(new FlowLayout());
         addImageChooser(panel);  // Add image chooser for story
-        addButton(panel, "Create Story", e -> createStory());  // Button to create a story
+        addButton(panel, "Create Story", e -> {
+            try {
+                createStory();
+            } catch (IOException ex) {
+                Logger.getLogger(SocialMediaApp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });  // Button to create a story
         addButton(panel, "Delete Story", e -> deleteSpecificStory());  // Button to delete a specific story
         return panel;
     }
@@ -201,7 +210,11 @@ JButton deleteButton = new JButton("Delete");
             showMessage("Post content cannot be empty or missing an image.");
             return;
         }
-        user.postManager.createPost(user.getUserId(), content, selectedImagePath);  // Create a post
+        try {
+            user.postManager.createPost(user.getUserId(), content, selectedImagePath);  // Create a post
+        } catch (IOException ex) {
+            Logger.getLogger(SocialMediaApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
         postTextArea.setText("");
         selectedImagePath = null;
         postImageLabel.setIcon(null);
@@ -350,7 +363,7 @@ JButton deleteButton = new JButton("Delete");
     }
     }
     
-    private void createStory() {
+    private void createStory() throws IOException {
         if (selectedImagePath == null) {
             showMessage("Please choose an image for the story.");
             return;

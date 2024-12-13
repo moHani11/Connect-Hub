@@ -129,7 +129,7 @@ jPanel2.add(friendsLabel);  // إضافة الـ JLabel إلى الـ JPanel
     for (String email : friendsEmails) {
     // إنشاء JLabel لكل صديق
     String friendUserName = userAccountManagement.getUsernameByEmail(email);
-    JLabel friendLabel = new JLabel(" >> " + friendUserName);
+    JLabel friendLabel = new JLabel("- " + friendUserName);
     jPanel2.add(friendLabel);  // إضافة الصديق إلى اللوحة
     }
 //  ترتيب الأصدقاء عموديً
