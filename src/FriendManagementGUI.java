@@ -5,8 +5,11 @@
 package connecthub;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -227,11 +230,11 @@ public class FriendManagementGUI extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(180, 180, 180)
-                        .addComponent(Addfriend))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(180, 180, 180)
+                .addComponent(Addfriend)
+                .addGap(93, 142, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
 
@@ -295,8 +298,12 @@ public class FriendManagementGUI extends javax.swing.JFrame {
         // Get the email of the selected user
         String email = userAccountManagement.getEmailByUsername(username);
 
-        // Send friend request from current user to the selected user
-        friendManagement.sendFriendRequest(currentUserEmail, email);
+         try {
+             // Send friend request from current user to the selected user
+             friendManagement.sendFriendRequest(currentUserEmail, email);
+         } catch (IOException ex) {
+             Logger.getLogger(FriendManagementGUI.class.getName()).log(Level.SEVERE, null, ex);
+         }
 
         // Remove the added user from the friend suggestions list
         loadFriendSuggestions();  // Reload the friend suggestions to reflect the changes

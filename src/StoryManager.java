@@ -1,5 +1,6 @@
 package connecthub;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,11 +22,14 @@ public class StoryManager {
         loadAllStoriesFromFile();
     }
 
-    public void createStory(String userId, String imagePath) {
+    public void createStory(String userId, String imagePath) throws IOException {
         Story newStory = new Story(userId, imagePath, new Date());
         stories.add(newStory);
         allStories.add(newStory);
         saveStoriesToFile();
+        NotificationManager notiManager = new NotificationManager();
+        String type = "NewStory";
+       notiManager.sendNotificationsToFriends(userId, type);
     }
 
     public ArrayList<Story> getStories() {

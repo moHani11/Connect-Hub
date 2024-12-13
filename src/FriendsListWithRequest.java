@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FriendsListWithRequest extends JFrame {
 
@@ -286,15 +288,19 @@ private void loadFriendSuggestions() {
         }
 
         addButton.addActionListener(e -> {
-            // Send friend request logic
-            userAccountManagement.sendFriendRequest(currentUserEmail, email);
-            requestStatus.put(username, "Pending"); // Update the request status
-            addButton.setText("Pending"); // Change button text to Pending
-            addButton.setEnabled(false); // Disable the button after sending the request
-
-            // Immediately update suggestion list and requests list
-            loadFriendSuggestions(); // Reload suggestion list to reflect the change
-            loadFriendRequests();    // Reload the friend requests tab to reflect the new request
+            try {
+                // Send friend request logic
+                userAccountManagement.sendFriendRequest(currentUserEmail, email);
+                requestStatus.put(username, "Pending"); // Update the request status
+                addButton.setText("Pending"); // Change button text to Pending
+                addButton.setEnabled(false); // Disable the button after sending the request
+                
+                // Immediately update suggestion list and requests list
+                loadFriendSuggestions(); // Reload suggestion list to reflect the change
+                loadFriendRequests();    // Reload the friend requests tab to reflect the new request
+            } catch (IOException ex) {
+                Logger.getLogger(FriendsListWithRequest.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         suggestionPanel.add(nameLabel);

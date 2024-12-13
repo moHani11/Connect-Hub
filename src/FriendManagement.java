@@ -29,7 +29,7 @@ public class FriendManagement {
         this.userAccountManagement = userAccountManagement;
     }
 
-    public void sendFriendRequest(String senderEmail, String receiverEmail) {
+    public void sendFriendRequest(String senderEmail, String receiverEmail) throws IOException {
     // Ensure the receiver's friend requests map exists
     friendRequests.computeIfAbsent(receiverEmail, k -> new HashSet<>());
     

@@ -3,6 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */ 
 package connecthub;
+
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -17,15 +31,16 @@ public class UserAccountManagement {
     public Map<String, User> userDatabase = new HashMap<>(); // Mock file-based database
     private ConnectHubEngine cEngine;
     
-    public Map<String, User> getUserDatabase() {
-        return userDatabase;
-    }
     public UserAccountManagement(ConnectHubEngine c){
         this.cEngine = c;
         c.loadData(this);
     }
     
-    public void sendFriendRequest(String senderEmail, String receiverEmail) {
+    public Map<String, User> getUserDatabase() {
+        return userDatabase;
+    }
+    
+    public void sendFriendRequest(String senderEmail, String receiverEmail) throws IOException {
     User sender = userDatabase.get(senderEmail);
     User receiver = userDatabase.get(receiverEmail);
     if (sender != null && receiver != null && !senderEmail.equals(receiverEmail)) {
@@ -33,6 +48,9 @@ public class UserAccountManagement {
         receiver.getFriendRequests().add(senderEmail);
 //        saveDatabase();  // Save after updating the request
         cEngine.saveData(this);
+         NotificationManager notiManager = new NotificationManager();
+        String type = "FriendRequest";
+       notiManager.friendRequestNotification(senderEmail, type,receiverEmail);
     }
 }
 
@@ -321,4 +339,3 @@ cEngine.saveData(this);
         return hexString.toString();
     }
 }
- 

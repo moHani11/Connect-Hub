@@ -2,9 +2,12 @@ package connecthub;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TRYNewsfeedWithSearchBar extends JFrame {
     private User user;
@@ -102,9 +105,21 @@ private void performSearch(String query) {
 
         // Add actions to buttons
         viewProfileButton.addActionListener(e -> viewProfile(result, resultsFrame));
-        addFriendButton.addActionListener(e -> addFriend(result, addFriendButton));
+        addFriendButton.addActionListener(e -> {
+            try {
+                addFriend(result, addFriendButton);
+            } catch (IOException ex) {
+                Logger.getLogger(TRYNewsfeedWithSearchBar.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
         blockUserButton.addActionListener(e -> blockUser(result));
-        removeFriendButton.addActionListener(e -> removeFriend(result));
+        removeFriendButton.addActionListener(e -> {
+            try {
+                removeFriend(result);
+            } catch (IOException ex) {
+                Logger.getLogger(TRYNewsfeedWithSearchBar.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
 
         userPanel.add(viewProfileButton);
         userPanel.add(addFriendButton);
@@ -172,7 +187,7 @@ private void viewProfile(User selectedUser, JFrame resultsFrame) {
     profileGUI.setVisible(true); // Open the profile window for the selected user
 }
 
-    private void addFriend(User otherUser, JButton addFriendButton) {
+    private void addFriend(User otherUser, JButton addFriendButton) throws IOException {
         // Check if the user is already friends
         if (user.getFriends().contains(otherUser.getEmail())) {
             JOptionPane.showMessageDialog(this, "You are already friends with " + otherUser.getUsername());
@@ -195,7 +210,7 @@ private void viewProfile(User selectedUser, JFrame resultsFrame) {
     }
 
     // Remove Friend Action
-    private void removeFriend(User otherUser) {
+    private void removeFriend(User otherUser) throws IOException {
         // Check if the user is friends
         if (user.getFriends().contains(otherUser.getEmail())) {
             userAccountManagement.removeFriend(user.getEmail(), otherUser.getEmail());
