@@ -145,9 +145,6 @@ public class NotificationManager {
                 case "NewPost":
                     message = "Your friend " + username + " has posted a new post!";
                     break;
-                case "FriendRequest":
-                    message = "Your friend " + username + " has sent you a friend request.";
-                    break;
                 case "GroupActivity":
                     message = "Your friend " + username + " has updated group activities.";
                     break;
@@ -216,4 +213,14 @@ public class NotificationManager {
 //        e.printStackTrace();
 //    }
 //}
+   public void friendRequestNotification(String senderEmail, String type, String receiverEmail) {
+    // استرجاع البريد الإلكتروني للمستخدم
+    ConnectHubEngine c = new ConnectHubEngine();
+    UserAccountManagement userAccountManagement = new UserAccountManagement(c);
+    String SenderUserName = userAccountManagement.getUsernameByEmail(senderEmail);
+    String message = "You have a new friend request from " + SenderUserName + ".";
+    addNotification( receiverEmail, "FriendRequest",message);
+   
+}
+
 }
