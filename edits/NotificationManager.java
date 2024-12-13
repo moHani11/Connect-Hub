@@ -100,11 +100,18 @@ public class NotificationManager {
 
     public List<Notification> getNotificationsForUser(String userId) {
         List<Notification> userNotifications = new ArrayList<>();
+        System.out.println("Loading notifications for user: " + userId);  // إضافة طباعة للتأكد من المعرف المستخدم
         for (Notification noti : notificationsList) {
             if (noti.getUserid().equals(userId)) {
                 userNotifications.add(noti);
             }
         }
+        
+        // إذا كانت الإشعارات فارغة، طبع رسالة للتحقق
+        if (userNotifications.isEmpty()) {
+            System.out.println("No notifications found for user: " + userId);
+        }
+        
         return userNotifications;
     }
 
@@ -131,23 +138,24 @@ public class NotificationManager {
         Set<String> friendsEmails = userAccountManagement.getFriends(email);
 
         // إنشاء إشعار لكل صديق
+        String username =userAccountManagement.getUsernameByID(userId);
         for (String friendId : friendsEmails) {
             String message;
             switch (type) {
                 case "NewPost":
-                    message = "Your friend " + userId + " has posted a new post!";
+                    message = "Your friend " + username + " has posted a new post!";
                     break;
                 case "FriendRequest":
-                    message = "Your friend " + userId + " has sent you a friend request.";
+                    message = "Your friend " + username + " has sent you a friend request.";
                     break;
                 case "GroupActivity":
-                    message = "Your friend " + userId + " has updated group activities.";
+                    message = "Your friend " + username + " has updated group activities.";
                     break;
                 case "NewStory":
-                    message = "Your friend " + userId + " has Posted new Story.";
+                    message = "Your friend " + username + " has Posted new Story.";
                     break;
                 default:
-                    message = "Your friend " + userId + " has an update.";
+                    message = "Your friend " + username + " has an update.";
             }
             addNotification(friendId, type, message);
         }

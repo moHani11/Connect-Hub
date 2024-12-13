@@ -4,12 +4,15 @@
  */
 package connecthub;
 
+import connecthub.Notification;
 import connecthub.User;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.IOException;
+import java.util.List;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 
 /**
@@ -17,16 +20,18 @@ import javax.swing.JLabel;
  * @author Asem
  */
 public class NotificationsGUI extends javax.swing.JFrame {
-private User user;
-private NotificationManager manager;
+
+    private User user;
+    private NotificationManager manager;
+
     /**
      * Creates new form NotificationsGUI
      */
     public NotificationsGUI(User user) throws IOException {
-        this.user=user;
+        this.user = user;
         setTitle("Notifications");
         setSize(420, 420);
-         manager = new NotificationManager();
+        manager = new NotificationManager();
         setLocationRelativeTo(null);
         initComponents();
         this.setLayout(null);
@@ -34,14 +39,14 @@ private NotificationManager manager;
         JLabel NotiLabel = new JLabel("Notifications :");
         NotiLabel.setFont(new Font("Arial", Font.BOLD, 18));  // تعيين الخط ليكون بحجم 18 وبالخط العريض
         NotiLabel.setForeground(Color.black);  // تعيين اللون الأبيض للنص
-        jLabel2.setText("Number of Unread Notification : "+String.valueOf(manager.getNotificationsForUser(user.getUserId()).size()));
+        jLabel2.setText("Number of Unread Notification : " + String.valueOf(manager.getNotificationsForUser(user.getEmail()).size()));
         jPanel1.add(NotiLabel);  // إضافة الـ JLabel إلى الـ JPanel
 //        jPanel1.setLayout(null);
 //        jPanel1.add(jLabel2);  // إضافة الـ JLabel إلى الـ JPanel
 //        jPanel1.add(jLabel3);  // إضافة الـ JLabel إلى الـ JPanel
-        
-       // الحصول على إشعارات المستخدم
-        var notifications = manager.getNotificationsForUser(user.getUserId());
+
+        // الحصول على إشعارات المستخدم
+        List<Notification> notifications = manager.getNotificationsForUser(user.getEmail());
 
         if (notifications.isEmpty()) {
             JLabel noNotificationsLabel = new JLabel("No notifications available.");
@@ -51,10 +56,88 @@ private NotificationManager manager;
         } else {
             // إضافة كل إشعار إلى الـ JPanel
             for (Notification noti : notifications) {
+                // إنشاء JLabel للإشعار
                 JLabel NotiLabel1 = new JLabel(noti.getMessage());
                 NotiLabel1.setFont(new Font("Arial", Font.PLAIN, 14));
                 NotiLabel1.setForeground(Color.BLACK);
-                jPanel1.add(NotiLabel1);  // إضافة إشعار إلى الـ JPanel
+
+                // التحقق من نوع الإشعار
+                if (noti.getType().equals("FriendRequest")) {
+                    // زر "Open Friends"
+                    JButton openFriendsButton = new JButton("Open Friends");
+                    openFriendsButton.setFont(new Font("Arial", Font.PLAIN, 12));
+                    openFriendsButton.setForeground(Color.WHITE);
+                    openFriendsButton.setBackground(Color.GREEN);
+
+                    // زر "Mark as Read"
+                    JButton markAsReadButton = new JButton("Mark as Read");
+                    markAsReadButton.setFont(new Font("Arial", Font.PLAIN, 12));
+                    markAsReadButton.setForeground(Color.WHITE);
+                    markAsReadButton.setBackground(Color.BLUE);
+
+                    // إضافة ActionListener لزر "Open Friends"
+                    openFriendsButton.addActionListener(e -> {
+                        System.out.println("Opening friends window for user: " + user.getEmail());
+
+                        UserAccountManagement userAccountManagement = new UserAccountManagement(new ConnectHubEngine());
+                        FriendsListWithRequest friendsList = new FriendsListWithRequest(userAccountManagement, user.getEmail(), new ConnectHubEngine(), user);
+
+                        this.setVisible(false);
+                        friendsList.setVisible(true);
+                    });
+
+                    // إضافة ActionListener لزر "Mark as Read"
+                    markAsReadButton.addActionListener(e -> {
+                        noti.setIsRead(true);
+                        manager.markAsRead(noti.getNotificationId());
+
+                        // إزالة الإشعار والزر "Mark as Read" فقط
+                        jPanel1.remove(NotiLabel1);
+                        jPanel1.remove(markAsReadButton);
+                        manager.deleteNotification(noti.getNotificationId());
+                        jLabel2.setText("Number of Unread Notification : " + String.valueOf(manager.getNotificationsForUser(user.getEmail()).size()));
+
+                        // تحديث الواجهة
+                        jPanel1.revalidate();
+                        jPanel1.repaint();
+
+                        System.out.println("Notification marked as read: " + noti.getMessage());
+                    });
+
+                    // إضافة الإشعار والأزرار إلى الواجهة
+                    jPanel1.add(NotiLabel1);
+                    jPanel1.add(openFriendsButton);
+                    jPanel1.add(markAsReadButton);
+
+                } else {
+                    // زر عام للإشعارات الأخرى
+                    JButton markAsReadButton = new JButton("Mark as Read");
+                    markAsReadButton.setFont(new Font("Arial", Font.PLAIN, 12));
+                    markAsReadButton.setForeground(Color.WHITE);
+                    markAsReadButton.setBackground(Color.BLUE);
+
+                    // إضافة ActionListener للزر
+                    markAsReadButton.addActionListener(e -> {
+                        noti.setIsRead(true);
+                        manager.markAsRead(noti.getNotificationId());
+                        manager.deleteNotification(noti.getNotificationId());
+                        jLabel2.setText("Number of Unread Notification : " + String.valueOf(manager.getNotificationsForUser(user.getEmail()).size()));
+
+                        // إزالة الإشعار والزر
+                        jPanel1.remove(NotiLabel1);
+                        jPanel1.remove(markAsReadButton);
+
+                        // تحديث الواجهة
+                        jPanel1.revalidate();
+                        jPanel1.repaint();
+
+                        System.out.println("Notification marked as read: " + noti.getMessage());
+                    });
+
+                    // إضافة الإشعار والزر إلى الواجهة
+                    jPanel1.add(NotiLabel1);
+                    jPanel1.add(markAsReadButton);
+                }
             }
         }
 
