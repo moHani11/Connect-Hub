@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 public class GroupManager {
@@ -122,13 +123,6 @@ public void deleteGroup(String groupId, String userId) {
         return allPosts;
     }
 
-    public void addPostToGroup(String groupId, Post post) {
-        Group group = getGroupById(groupId);
-        if (group != null) {
-            group.addPost(post);
-            saveGroupsToFile();
-        }
-    }
 
     public Group getGroupById(String groupId) {
         for (Group group : allGroups) {
@@ -165,19 +159,7 @@ public void deleteGroup(String groupId, String userId) {
             }
         }
     }
-    public void updatePostInGroup(String groupId, Post post) {
-    Group group = getGroupById(groupId);
-    if (group != null) {
-        
-        for (int i = 0; i < group.getPosts().size(); i++) {
-            if (group.getPosts().get(i).getContentId().equals(post.getContentId())) {
-                group.getPosts().set(i, post); 
-                break;
-            }
-        }
-        saveGroupsToFile();
-    }
-}
+   
 public void deletePostFromGroup(String groupId, String contentId) {
     Group group = getGroupById(groupId);
     if (group != null) {
@@ -242,5 +224,44 @@ public void deletePostFromGroup(String groupId, String contentId) {
         System.err.println("Group not found with ID: " + updatedGroup.getGroupId());
     }
 }
+    public void addPostToGroup(String groupId, Post post) {
+        Group group = getGroupById(groupId);
+        if (group != null) {
+            group.addPost(post);
+            saveGroupsToFile();
+        }
+    }
+
+    // Update the post content and image in the group
+    public void updatePostInGroup(String groupId, Post updatedPost) {
+        Group group = getGroupById(groupId);
+        if (group != null) {
+            for (int i = 0; i < group.getPosts().size(); i++) {
+                if (group.getPosts().get(i).getContentId().equals(updatedPost.getContentId())) {
+                    // Update content and image path
+                    Post post = group.getPosts().get(i);
+                    post.setContent(updatedPost.getContent());
+                    if (updatedPost.getImagePath() != null && !updatedPost.getImagePath().isEmpty()) {
+                        post.updateImage(updatedPost.getImagePath());
+                    } else {
+                        post.removeImage();
+                    }
+                    group.getPosts().set(i, post);
+                    break;
+                }
+            }
+            saveGroupsToFile();
+        }
+    }
+    public void createPost(String groupId, String userId, String content, String imagePath) {
+        Group group = getGroupById(groupId);
+        if (group != null) {
+            String contentId = "Post-" + System.currentTimeMillis(); // Generate a unique ID for the post
+            Post newPost = new Post(userId, content, imagePath, new Date(), contentId);
+            addPostToGroup(groupId, newPost);
+        } else {
+            System.err.println("Group not found with ID: " + groupId);
+        }
+    }
     
 }

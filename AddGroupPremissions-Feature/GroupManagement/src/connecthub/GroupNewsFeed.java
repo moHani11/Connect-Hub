@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package connecthub;
 
 import java.awt.*;
@@ -14,32 +10,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.*;
 import javax.swing.border.Border;
 
 public class GroupNewsFeed extends javax.swing.JFrame {
-
     GroupManager groupManager;
     User currentUser;
     Group currentGroup;   
     JFrame viewFrame = new JFrame("Group properties");
-    
+
     public GroupNewsFeed(User currentUser, String GroupId) {
-        
         this.currentUser = currentUser;
         this.groupManager = new GroupManager();
         this.currentGroup = groupManager.getGroupById(GroupId);
         initComponents();
         
         this.setLocation(400, 120);
-                
+        
         setGroupName();
         setGroupPhoto();
         populateFeed();
         
         this.setVisible(true);
-
+        
+        // إضافة الأزرار بشكل يدوي بعد إنشاء الـ UI
+        addPostComponents();  
     }
 
     public void setGroupName(){
@@ -47,8 +42,6 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         jLabel1.setText(GroupName);
         jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
         jLabel1.setFont(new Font("Arial", Font.BOLD, 26)); // Font(name, style, size)
-
-
         jLabel1.setOpaque(true); 
         jLabel1.setBackground(Color.CYAN);
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2); // Black border with 3px thickness
@@ -57,23 +50,20 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         jLabel2.setOpaque(true); 
         jLabel2.setBackground(Color.CYAN);
         jLabel2.setBorder(border);
-
     }
 
     public void setGroupPhoto(){
-        
         String imagePath = this.currentGroup.getGroupPhoto();
         if (imagePath.isBlank()){
-        imagePath  = "cover.jpg" ;
+            imagePath  = "cover.jpg" ;
         }
         
         coverImageFrame1.setBorderSize(10);
         coverImageFrame1.setBorderColor(Color.black);
         coverImageFrame1.setImage(imagePath);
     }
-    
+
     public void populateFeed(){
-      
         jScrollPane1.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         JPanel panelContainer = new JPanel();
         panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.Y_AXIS));  // Arrange panels vertically
@@ -81,30 +71,96 @@ public class GroupNewsFeed extends javax.swing.JFrame {
         
         ArrayList<Post> groupPosts = groupManager.getPostsInGroup(currentGroup.getGroupId());
         ArrayList<JPanel> postsPanels = new ArrayList<>();
-
         for (Post post : groupPosts) {
             JPanel panel = SocialMediaApp.createPostCard(post);  // Create card for each post
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 4));
             postsPanels.add(panel);
         }
-
-    // Loop through and add panels
+        // Loop through and add panels
         for (int i = 0; i < postsPanels.size(); i++) {
             JPanel temp = new JPanel();
             temp.setBackground(Color.lightGray);  // Random background color
             temp.setPreferredSize(new Dimension(500, 20));  // Set a fixed height for each panel
             temp.setBorder(BorderFactory.createBevelBorder(0));
-        // Add the panel to the container
+            // Add the panel to the container
             panelContainer.add(postsPanels.get(i));
             panelContainer.add(temp);
+        }
+        // Revalidate and repaint to ensure the scroll pane updates
+        panelContainer.revalidate();
+        panelContainer.repaint();
     }
 
-    // Revalidate and repaint to ensure the scroll pane updates
-    panelContainer.revalidate();
-    panelContainer.repaint();
+    private void addPostComponents() {
+        // إنشاء لوحة جديدة تحتوي على JTextArea و JButton
+        JPanel postPanel = new JPanel();
+        postPanel.setLayout(new FlowLayout(FlowLayout.LEFT));  // وضع الأزرار والنصوص جنبًا إلى جنب
         
+        JTextArea postContent = new JTextArea("Write your post here...");
+        postContent.setPreferredSize(new Dimension(250, 100)); // تعيين الحجم المناسب لمنطقة الكتابة
+        postPanel.add(new JScrollPane(postContent));
+
+        // زر لإضافة صورة
+        JButton imageButton = new JButton("Add Image");
+        imageButton.addActionListener(e -> {
+            // تنفيذ منطق إضافة صورة
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                // هنا يمكن استخدام مسار الصورة المحدد لإضافته إلى البوست
+            }
+        });
+        postPanel.add(imageButton);
+
+        // إضافة اللوحة التي تحتوي على الأزرار والنصوص إلى النافذة
+        jPanel1.add(postPanel, BorderLayout.SOUTH);
     }
     
+    private void postInGroup(Group group) {
+        JDialog postDialog = new JDialog(this, "Post in Group: " + group.getName(), true);
+        postDialog.setSize(400, 300);
+        JPanel postPanel = new JPanel(new BorderLayout());
+        
+        // Create a panel for the text area and the buttons
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align components to the left
+        
+        JTextArea postContent = new JTextArea("Write your post here...");
+        postContent.setPreferredSize(new Dimension(250, 100)); // Set preferred size for the text area
+        inputPanel.add(new JScrollPane(postContent));
+
+        // Add buttons for selecting images
+        JButton imageButton = new JButton("Add Image");
+        imageButton.addActionListener(e -> {
+            // Implement logic for adding an image
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                // Here you can use the selected image path for the post
+            }
+        });
+        inputPanel.add(imageButton);
+
+        postPanel.add(inputPanel, BorderLayout.CENTER);
+        
+        JButton postButton = new JButton("Post");
+        postButton.addActionListener(e -> {
+            String content = postContent.getText().trim();
+            if (!content.isEmpty()) {
+                Post post = new Post(currentUser.getUserId(), content, null, new Date(), "");
+                groupManager.addPostToGroup(group.getGroupId(), post);
+                JOptionPane.showMessageDialog(postDialog, "Post added successfully!");
+                postDialog.dispose();
+            } else {
+                JOptionPane.showMessageDialog(postDialog, "Post content cannot be empty.");
+            }
+        });
+        postDialog.add(postPanel, BorderLayout.CENTER);
+        postDialog.add(postButton, BorderLayout.SOUTH);
+        postDialog.setVisible(true);
+    }
     public void createGroupPanel(String groupTitle, String description, ArrayList<String> members) {
         // Create the main panel that will contain all components
 
@@ -253,31 +309,6 @@ public class GroupNewsFeed extends javax.swing.JFrame {
    
     }
     
-    private void postInGroup(Group group) {
-        JDialog postDialog = new JDialog(this, "Post in Group: " + group.getName(), true);
-        postDialog.setSize(400, 300);
-        JPanel postPanel = new JPanel(new BorderLayout());
-
-        JTextArea postContent = new JTextArea("Write your post here...");
-        postPanel.add(new JScrollPane(postContent), BorderLayout.CENTER);
-
-        JButton postButton = new JButton("Post");
-        postButton.addActionListener(e -> {
-            String content = postContent.getText().trim();
-            if (!content.isEmpty()) {
-                Post post = new Post(currentUser.getUserId(), content, null, new Date(), "");
-                groupManager.addPostToGroup(group.getGroupId(), post);
-                JOptionPane.showMessageDialog(postDialog, "Post added successfully!");
-                postDialog.dispose();
-            } else {
-                JOptionPane.showMessageDialog(postDialog, "Post content cannot be empty.");
-            }
-        });
-
-        postDialog.add(postPanel, BorderLayout.CENTER);
-        postDialog.add(postButton, BorderLayout.SOUTH);
-        postDialog.setVisible(true);
-    }
     
     
     @SuppressWarnings("unchecked")
