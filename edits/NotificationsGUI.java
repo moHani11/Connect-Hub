@@ -17,14 +17,16 @@ import javax.swing.JLabel;
  * @author Asem
  */
 public class NotificationsGUI extends javax.swing.JFrame {
-
+private User user;
+private NotificationManager manager;
     /**
      * Creates new form NotificationsGUI
      */
     public NotificationsGUI(User user) throws IOException {
+        this.user=user;
         setTitle("Notifications");
         setSize(420, 420);
-        NotificationManager manager = new NotificationManager();
+         manager = new NotificationManager();
         setLocationRelativeTo(null);
         initComponents();
         this.setLayout(null);
@@ -38,12 +40,25 @@ public class NotificationsGUI extends javax.swing.JFrame {
 //        jPanel1.add(jLabel2);  // إضافة الـ JLabel إلى الـ JPanel
 //        jPanel1.add(jLabel3);  // إضافة الـ JLabel إلى الـ JPanel
         
-        for (Notification noti : manager.getNotificationsForUser(user.getUserId())) {
-            // إنشاء JLabel لكل صديق
-            JLabel NotiLabel1 = new JLabel(noti.getMessage());
-            jPanel1.add(NotiLabel1);  // إضافة الصديق إلى اللوحة
+       // الحصول على إشعارات المستخدم
+        var notifications = manager.getNotificationsForUser(user.getUserId());
+
+        if (notifications.isEmpty()) {
+            JLabel noNotificationsLabel = new JLabel("No notifications available.");
+            noNotificationsLabel.setFont(new Font("Arial", Font.ITALIC, 14));
+            noNotificationsLabel.setForeground(Color.black);
+            jPanel1.add(noNotificationsLabel);  // إضافة النص عندما لا توجد إشعارات
+        } else {
+            // إضافة كل إشعار إلى الـ JPanel
+            for (Notification noti : notifications) {
+                JLabel NotiLabel1 = new JLabel(noti.getMessage());
+                NotiLabel1.setFont(new Font("Arial", Font.PLAIN, 14));
+                NotiLabel1.setForeground(Color.BLACK);
+                jPanel1.add(NotiLabel1);  // إضافة إشعار إلى الـ JPanel
+            }
         }
-//  ترتيب الاشعارات عموديً
+
+        // ترتيب الإشعارات عموديًا
         jPanel1.setPreferredSize(new Dimension(289, 260));
         jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.Y_AXIS));
         jPanel1.repaint();
@@ -66,6 +81,7 @@ public class NotificationsGUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -95,26 +111,35 @@ public class NotificationsGUI extends javax.swing.JFrame {
 
         jLabel2.setText("Number of Unread Notification :");
 
+        jButton5.setText("<--");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(110, 110, 110)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap()
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48)
+                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -123,6 +148,11 @@ public class NotificationsGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        this.setVisible(false);
+        NewsFeed n = new NewsFeed(user);
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -160,6 +190,7 @@ public class NotificationsGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
