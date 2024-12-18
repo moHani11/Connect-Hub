@@ -1,34 +1,37 @@
 # This Branch present our work that continues the Connect Hub Java Assignment
 
-## !New Important Instructions(Must be Done) <<<<<<
+## !New Important Instructions <<<<<<
 
-- Every time a member does anything in the code he should commit the changes and push them into his corresponding branch even if the code is not working so other members can see the progress done in the corresponding task.
+- Apply **design patterns** and **solid principles**
 
-- When commiting changes into the code the commit message should refer to the changes done in the code and not leave the commit message empty. 
-
-- A pull request is not done until the task is fully finished and the code should be merged into the main branch.
 
 # Tasks Distribution:
 
 ### Note that in any task every member should check for validations and put **try**s and **except**s for code stability by default, the code should not crash at any instance.
 
 - Assem Killany:  
-> 1. Notificaion System
-> 2. Initial State Diagram
+> 1. Notificaion    (extended)
+> 2. Initial Class Diagram
 
 - Mohamed Hani:  
-> 1. Finish what's left from Lab 9
-> 2. Newsfeed Page Extended
-> 3. Initial Use-Case diagram
+> 1. Chat System
+> 2. Initial Sequence diagram
 
 - Mohamed Mostafa:  
-> 1. Search Functionality  
-> 2. Initial UML diagram
+> 1. Comment feature Functionality  
+> 2. Initial use case diagram
 
 - Mazin Wael:       
-> 1. Group Management
-> 2. Initial Sequence Diagram
+> 1. Like feature Functionality
+> 2. Initial state Diagram
 
+### Last Lab Instructions
+
+- Every time a member does anything in the code he should commit the changes and push them into his corresponding branch even if the code is not working so other members can see the progress done in the corresponding task.
+
+- When commiting changes into the code the commit message should refer to the changes done in the code and not leave the commit message empty. 
+
+- A pull request is not done until the task is fully finished and the code should be merged into the main branch.
 
 #### ! Any Member who finished his work should inform others so he take another task if possible
 
