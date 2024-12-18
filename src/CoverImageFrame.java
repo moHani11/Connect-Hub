@@ -53,35 +53,54 @@ public class CoverImageFrame extends JComponent {
         this.borderColor = borderColor;
     }
     
-    @Override
-    public void paint(Graphics g){
-        if(image != null){
-            int width = image.getIconWidth();
-            int height = image.getIconHeight();
-            
-            BufferedImage masked = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = masked.createGraphics();
-            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            // No oval, just draw a rectangle now
-            g2d.drawImage(toImage(image), 0, 0, width, height, null);
-            g2d.dispose();
-            
-            Icon icon = new ImageIcon(masked);
-            Rectangle size = getAutoSize(icon);
-            Graphics2D g2 = (Graphics2D )g;
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2.drawImage(toImage(icon), size.getLocation().x, size.getLocation().y, size.getSize().width, size.getSize().height, null);
-            
-            if(borderSize > 0){
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(borderColor);
-                g2.setStroke(new BasicStroke(borderSize));
-                // Draw rectangle border instead of oval
-                g2.drawRect(size.x + borderSize / 2, size.y + borderSize / 2, size.width - borderSize, size.height - borderSize);
-            }
+   @Override
+public void paint(Graphics g) {
+    if (image != null) {
+        int width = image.getIconWidth();
+        int height = image.getIconHeight();
+
+        // Validate dimensions
+        if (width <= 0 || height <= 0) {
+            System.err.println("Invalid image dimensions: width=" + width + ", height=" + height);
+            return; // Exit early if dimensions are invalid
         }
-        super.paint(g);
+
+        // Create a BufferedImage for rendering
+        BufferedImage masked = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = masked.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        // Draw image into the BufferedImage
+        g2d.drawImage(toImage(image), 0, 0, width, height, null);
+        g2d.dispose();
+
+        // Convert masked BufferedImage back to Icon
+        Icon icon = new ImageIcon(masked);
+
+        // Calculate auto size
+        Rectangle size = getAutoSize(icon);
+
+        // Draw the image to the screen
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(toImage(icon), size.x, size.y, size.width, size.height, null);
+
+        // Draw border if needed
+        if (borderSize > 0) {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(borderSize));
+            g2.drawRect(
+                size.x + borderSize / 2,
+                size.y + borderSize / 2,
+                size.width - borderSize,
+                size.height - borderSize
+            );
+        }
     }
+
+    // Call super.paint() to ensure the rest of the component renders correctly
+    super.paint(g);
+}
 
     private Image toImage(Icon icon){
         return ((ImageIcon) icon).getImage();

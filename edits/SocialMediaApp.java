@@ -145,13 +145,7 @@ JButton deleteButton = new JButton("Delete");
     private JPanel createStorySection() {
         JPanel panel = new JPanel(new FlowLayout());
         addImageChooser(panel);  // Add image chooser for story
-        addButton(panel, "Create Story", e -> {
-            try {
-                createStory();
-            } catch (IOException ex) {
-                Logger.getLogger(SocialMediaApp.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });  // Button to create a story
+        addButton(panel, "Create Story", e -> createStory());  // Button to create a story
         addButton(panel, "Delete Story", e -> deleteSpecificStory());  // Button to delete a specific story
         return panel;
     }
@@ -221,7 +215,7 @@ JButton deleteButton = new JButton("Delete");
         postImageLabel.setText("No Image Selected");
         refreshPosts();  // Refresh the posts display
     }
-//////////
+
     private void choosePost(boolean flag){
         
          ArrayList<Post> posts = user.postManager.getPosts();
@@ -363,7 +357,7 @@ JButton deleteButton = new JButton("Delete");
     }
     }
     
-    private void createStory() throws IOException {
+    private void createStory() {
         if (selectedImagePath == null) {
             showMessage("Please choose an image for the story.");
             return;

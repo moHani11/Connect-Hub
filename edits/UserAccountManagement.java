@@ -3,7 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */ 
 package connecthub;
+
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -18,9 +31,6 @@ public class UserAccountManagement {
     public Map<String, User> userDatabase = new HashMap<>(); // Mock file-based database
     private ConnectHubEngine cEngine;
     
-    public Map<String, User> getUserDatabase() {
-        return userDatabase;
-    }
     public UserAccountManagement(ConnectHubEngine c){
         this.cEngine = c;
         c.loadData(this);
@@ -33,9 +43,8 @@ public class UserAccountManagement {
         // Add sender to receiver's friend request list
         receiver.getFriendRequests().add(senderEmail);
 //        saveDatabase();  // Save after updating the request
-
         cEngine.saveData(this);
-          NotificationManager notiManager = new NotificationManager();
+         NotificationManager notiManager = new NotificationManager();
         String type = "FriendRequest";
        notiManager.friendRequestNotification(senderEmail, type,receiverEmail);
     }
@@ -155,15 +164,6 @@ public void unblockUser(String currentUserEmail, String targetUserEmail) {
     }
     return null; // Return null if no matching user is found
 }  
-   
-   public User getUserById(String userID) {
-    for (User user : userDatabase.values()) {
-        if (user.getUserId().equals(userID)) {
-            return user; // ترجع الكائن User بالكامل
-        }
-    }
-    return null; // ترجع null إذا لم يتم العثور على المستخدم
-}
 
 // Get a user's list of friends
     public Set<String> getFriends(String email) {
@@ -335,4 +335,3 @@ cEngine.saveData(this);
         return hexString.toString();
     }
 }
- 

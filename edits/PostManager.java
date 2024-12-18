@@ -201,8 +201,7 @@ public class PostManager {
         ArrayList<Post> friendsPosts = new ArrayList<>();
         ConnectHubEngine c = new ConnectHubEngine();
         UserAccountManagement userAccountManagement = new UserAccountManagement(c);
-        loadAllPostsFromFile();
-        
+
         for (Post post : allPosts) {
             if (friendsEmails.contains(userAccountManagement.getEmailByID(post.getUserId()))) {
                 friendsPosts.add(post);

@@ -11,6 +11,7 @@ public class Group {
     private String primaryAdminId;
     private ArrayList<String> adminIds;
     private ArrayList<String> memberIds;
+    private ArrayList<String> requestsIds;
     private ArrayList<Post> posts;
     private Date creationDate;
 
@@ -22,6 +23,7 @@ public class Group {
         this.primaryAdminId = primaryAdminId;
         this.adminIds = new ArrayList<>();
         this.memberIds = new ArrayList<>();
+        this.requestsIds = new ArrayList<>();
         this.posts = new ArrayList<>();
         this.creationDate = new Date();
         adminIds.add(primaryAdminId); // Primary admin is added to the admin list
@@ -72,6 +74,13 @@ public class Group {
         return memberIds;
     }
 
+    public ArrayList<String> getRequestsIds() {
+    if (this.requestsIds == null) {
+        this.requestsIds = new ArrayList<>(); // Initialize if null
+    }
+    return requestsIds;
+}
+    
     public ArrayList<Post> getPosts() {
         return posts;
     }
@@ -82,6 +91,16 @@ public class Group {
 
     public void addPost(Post post) {
         this.posts.add(post);
+    }
+    
+    public void addRequest(String userID){
+        if (!this.requestsIds.contains(userID)) {
+            this.requestsIds.add(userID);
+        }
+    }
+    
+    public void removeRequest(String userID){
+        this.requestsIds.remove(userID);
     }
 
     public void addMember(String userId) {
@@ -97,6 +116,7 @@ public class Group {
 
     public void promoteToAdmin(String userId) {
         if (!this.adminIds.contains(userId)) {
+            this.memberIds.remove(userId);
             this.adminIds.add(userId);
         }
     }
@@ -104,6 +124,26 @@ public class Group {
     public void demoteFromAdmin(String userId) {
         if (this.adminIds.contains(userId)) {
             this.adminIds.remove(userId);
+            this.memberIds.add(userId);
         }
     }
+    public void addAdmin(String userId) {
+        if (!this.adminIds.contains(userId) && !this.primaryAdminId.equals(userId)) {
+            this.adminIds.add(userId);
+        } else {
+            System.err.println("User is already an admin or is the primary admin.");
+        }
+    }
+
+    // Remove an admin from the group (ensuring primary admin isn't removed)
+    public void removeAdmin(String userId) {
+        if (this.adminIds.contains(userId) && !this.primaryAdminId.equals(userId)) {
+            this.adminIds.remove(userId);
+        } else if (this.primaryAdminId.equals(userId)) {
+            System.err.println("Cannot remove the primary admin.");
+        } else {
+            System.err.println("User is not an admin.");
+        }
+    }
+
 }

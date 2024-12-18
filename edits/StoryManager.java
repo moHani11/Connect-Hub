@@ -76,8 +76,7 @@ public class StoryManager {
         ArrayList<Story> friendsStories = new ArrayList<>();
         ConnectHubEngine c = new ConnectHubEngine();
         UserAccountManagement userAccountManagement = new UserAccountManagement(c);
-        loadAllStoriesFromFile();
-        
+
         for (Story story : allStories) {
             if (friendsEmails.contains(userAccountManagement.getEmailByID(story.getUserId())) 
                 && !story.isExpired()) {

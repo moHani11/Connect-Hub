@@ -291,15 +291,16 @@ private void loadFriendSuggestions() {
             try {
                 // Send friend request logic
                 userAccountManagement.sendFriendRequest(currentUserEmail, email);
+                requestStatus.put(username, "Pending"); // Update the request status
+                addButton.setText("Pending"); // Change button text to Pending
+                addButton.setEnabled(false); // Disable the button after sending the request
+                
+                // Immediately update suggestion list and requests list
+                loadFriendSuggestions(); // Reload suggestion list to reflect the change
+                loadFriendRequests();    // Reload the friend requests tab to reflect the new request
             } catch (IOException ex) {
                 Logger.getLogger(FriendsListWithRequest.class.getName()).log(Level.SEVERE, null, ex);
             }
-            requestStatus.put(username, "Pending"); // Update the request status
-            addButton.setText("Pending"); // Change button text to Pending
-            addButton.setEnabled(false); // Disable the button after sending the request
-            // Immediately update suggestion list and requests list
-            loadFriendSuggestions(); // Reload suggestion list to reflect the change
-            loadFriendRequests();    // Reload the friend requests tab to reflect the new request
         });
 
         suggestionPanel.add(nameLabel);

@@ -60,4 +60,13 @@ public class Post {
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
+    // Method to update the image of the post
+    public void updateImage(String newImagePath) {
+        this.imagePath = newImagePath;
+    }
+
+    // Method to remove the image from the post
+    public void removeImage() {
+        this.imagePath = null;
+    }
 }
