@@ -4,6 +4,12 @@
 
 - Apply **design patterns** and **solid principles**
 
+### Design Patterns that should be implemented:
+
+1. Creational Design Pattern: **Factory**
+2. Structural Design Pattern: **Facad**
+3. Behavioural Design Pattern: **Observer**
+
 
 # Tasks Distribution:
 
