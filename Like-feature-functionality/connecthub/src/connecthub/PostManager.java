@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JLabel;
 
@@ -68,17 +69,16 @@ public class PostManager {
     }
 
     
- public boolean likePost(String contentId, String userId) {
-    // Find the post by contentId
-    for (Post post : posts) {
+public boolean likePost(String contentId, String userId) {
+    for (Post post : allPosts) {
         if (post.getContentId().equals(contentId)) {
-            // Toggle like using the toggleLike method
             boolean liked = post.toggleLike(userId);
-            savePostsToFile();  
-            return liked;  
+            savePostsToFile();
+            return liked;
         }
     }
-    return false; // Post not found
+ 
+    return false;
 }
     
     
@@ -105,7 +105,7 @@ public class PostManager {
         }
     }
 
-    public static void savePostsToFile() {
+public static void savePostsToFile() {
         JSONArray postsJson = new JSONArray();
         for (Post post : allPosts) {
             JSONObject postJson = new JSONObject();
@@ -179,7 +179,6 @@ public class PostManager {
             e.printStackTrace();
         }
     }
-
     /////////////////////////////////////////////////////////////////////////
     private static Date parseDate(String dateStr) {
         try {

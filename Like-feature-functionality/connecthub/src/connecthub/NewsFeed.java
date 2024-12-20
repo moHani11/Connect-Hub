@@ -601,19 +601,47 @@ NotificationsGUI noti = null;
     
     }
     
-    public void generateFeedPosts(){
-        ArrayList<Post> postsArray = new ArrayList<>();
-             List<String> friendsList = new ArrayList<>(this.user.getFriends());
-            postsArray.addAll(user.postManager.getPostsByFriends(friendsList));
-        
-        this.postss = new ArrayList<>();
+public void generateFeedPosts() {
+    ArrayList<Post> postsArray = new ArrayList<>();
+    List<String> friendsList = new ArrayList<>(this.user.getFriends());
+    postsArray.addAll(user.postManager.getPostsByFriends(friendsList));
+    this.postss = new ArrayList<>();
 
     for (Post post : postsArray) {
-            JPanel panel = SocialMediaApp.createPostCard(post);  // Create card for each post
-            this.postss.add(panel);
-        }
+        JPanel panel = SocialMediaApp.createPostCard(post); // Create card for each post
 
+     
+        JButton likeButton = new JButton("Like");
+        JLabel likeCountLabel = new JLabel("Likes: " + post.getLikeCount());
+        likeButton.addActionListener(new ActionListener() {
+
+            @Override
+            
+            public void actionPerformed(ActionEvent e) {
+                   String userId = user.getUserId(); 
+        boolean isLiked = user.postManager.likePost(post.getContentId(), userId) ;
+                // Update UI
+                likeCountLabel.setText("Likes: " + post.getLikeCount());
+                if (isLiked) {
+                    likeButton.setText("Unlike");
+                    likeButton.setBackground(Color.RED); // Change to red when liked
+                    System.out.println("Likes: " + post.getLikeCount());
+                } else {
+                    likeButton.setText("Like");
+                    likeButton.setBackground(UIManager.getColor("Button.background")); // Reset to default color
+                      System.out.println("Likes: " + post.getLikeCount());
+                }
+            }
+        });
+
+        // Adding Like Button and Label to the Panel
+        panel.add(likeCountLabel);
+        panel.add(likeButton);
+
+        this.postss.add(panel);
     }
+}
+
     
     public void postsFeed(){
         
@@ -696,7 +724,7 @@ NotificationsGUI noti = null;
         likeButton.setSize(LIKE_BUTTON_WIDTH, LIKE_BUTTON_HEIGHT);
         commentButton.setSize(COMMENT_BUTTON_WIDTH, COMMENT_BUTTON_HEIGHT);
         
-        postsActionsPanel.add(likeButton);
+  
         postsActionsPanel.add(commentButton);
         
         

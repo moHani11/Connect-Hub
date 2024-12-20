@@ -19,18 +19,11 @@ public class Post {
         this.imagePath = imagePath;
         this.creationDate = creationDate;
         this.contentId = contentId;
-        this.likeCount = 0; // Initialize like count
-        this.likedBy = new HashSet<>(); // Initialize likedBy set
+        this.likeCount=0;
+        this.likedBy = new HashSet<>(); 
     }
 
-    public Post(String userId, String content, String imagePath, String contentId, Date creationDate, int likeCount) {
-        this.userId = userId;
-        this.content = content;
-        this.imagePath = imagePath;
-        this.contentId = contentId;
-        this.creationDate = creationDate;
-        this.likeCount = likeCount;
-    }
+
 
     // Getters and Setters
     public String getContent() {
@@ -76,12 +69,13 @@ public class Post {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public int getLikeCount() {
-        return likeCount;
-    }
+
 
     public void setLikeCount(int likeCount) {
         this.likeCount = likeCount;
+    }
+       public int getLikeCount() {
+        return likeCount;
     }
 
     public Set<String> getLikedBy() {
