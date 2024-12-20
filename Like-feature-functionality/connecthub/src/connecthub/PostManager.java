@@ -67,6 +67,21 @@ public class PostManager {
         }
     }
 
+    
+ public boolean likePost(String contentId, String userId) {
+    // Find the post by contentId
+    for (Post post : posts) {
+        if (post.getContentId().equals(contentId)) {
+            // Toggle like using the toggleLike method
+            boolean liked = post.toggleLike(userId);
+            savePostsToFile();  
+            return liked;  
+        }
+    }
+    return false; // Post not found
+}
+    
+    
     public ArrayList<Post> getPosts() {
         return posts;
     }
