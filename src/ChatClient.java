@@ -9,9 +9,13 @@ import java.util.List;
 
 public class ChatClient implements Subscriber{
 
-    private User chatUser;
+    private String userID;
     private ChatSystem currentSubscriebdSystem;
     private Message lastCreatedMessage;
+    
+    public ChatClient(String userID){
+        this.userID = userID;
+    }
     
     public void SubscribeToChatSystem(ChatSystem cSystem){
         this.currentSubscriebdSystem = cSystem;
@@ -19,13 +23,13 @@ public class ChatClient implements Subscriber{
     
     public void makeNewMessage(String messageData){
         
-     Message msg = new Message(chatUser.getUserId(), messageData);
+     Message msg = new Message(userID, messageData);
      this.lastCreatedMessage = msg;
     
     }
    
     public String getUserID(){
-        return this.chatUser.getUserId();
+        return this.userID;
     }
     
     @Override

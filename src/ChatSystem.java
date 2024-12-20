@@ -30,12 +30,17 @@ public class ChatSystem implements Publisher{
         chatSystemID = newID;
     }
     
-//    public void updateSystemID(){
-//        this.chatSystemID = "";
-//        for (ChatClient Client : currentClients){
-//            chatSystemID += Client.getUserID();
-//        }
-//    }
+    public List<String> getChatUsersIds(){
+        return usersIds;
+    }
+    
+    public ChatClient getClient(String UserID){
+        for (ChatClient client : currentClients){
+            if (client.getUserID().equals(UserID)){
+                return client;
+            }
+        } return null;
+    }
     
     public List<Message> getFullChat(){
         return this.fullChat;
@@ -60,7 +65,6 @@ public class ChatSystem implements Publisher{
     @Override
     public void notifySubscribers() {
         //Should  Save new Data
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
     

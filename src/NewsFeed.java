@@ -451,10 +451,13 @@ NotificationsGUI noti = null;
         pGUI.setVisible(true);
          
         });
-        
+        JButton ChatButton = new JButton(" Chat ");
+
+                
         
         friendPanel.add(friendLabel);
         friendPanel.add(ViewButton);
+        friendPanel.add(ChatButton);
         friendsPanel.add(friendPanel);
 }
         friendsPanel.setSize(panel_width+100, panel_height);
