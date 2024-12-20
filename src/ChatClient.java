@@ -16,6 +16,11 @@ public class ChatClient implements Subscriber{
     public ChatClient(String userID){
         this.userID = userID;
     }
+
+    public ChatClient(String userID, ChatSystem currentSystem){
+        this.userID = userID;
+        this.currentSubscriebdSystem = currentSystem;
+    }
     
     public void SubscribeToChatSystem(ChatSystem cSystem){
         this.currentSubscriebdSystem = cSystem;

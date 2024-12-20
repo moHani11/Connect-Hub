@@ -23,8 +23,7 @@ public class ChatSystemFacade {
         
     }
     
-    public void AddMessageToChat(String msg, String userID, ChatSystem chatSystem){
-        
+    public void AddMessageToChat(String msg, String userID, ChatSystem chatSystem){        
         ChatClient currentClient = chatSystem.getClient(userID);
         if (currentClient != null){
                     currentClient.makeNewMessage(msg);
@@ -32,14 +31,16 @@ public class ChatSystemFacade {
                     saveChatsToFile();
         }
         
-        System.out.println("There is no Client with such is in this ChatSystem");
+        else  System.out.println("There is no Client with such ID in this ChatSystem");
         
     }
     
     public ChatSystem getChatByUsers(List<String> usersIDs){
+        loadChatsFromFile();
+        
         for (ChatSystem chat : allChatSystems){
             List<String> chatIDs = chat.getChatUsersIds();
-            if (new HashSet<>(chatIDs).equals(new HashSet<>(usersIDs)))
+            if (isListsTheSame(chatIDs, usersIDs))
                 return chat;
         }
       ChatSystem newChat = createNewChatSystem(usersIDs);
@@ -47,6 +48,8 @@ public class ChatSystemFacade {
     }
     
     public ChatSystem createNewChatSystem(List<String> usersIDs){
+        loadChatsFromFile();
+        
         ChatSystem chatSys = new ChatSystem();
         for (String userID : usersIDs){
                 ChatClient client = new ChatClient(userID);
@@ -70,7 +73,7 @@ public class ChatSystemFacade {
     public  void loadChatsFromFile() {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(CHATS_FILE_NAME)) {
-            Type groupListType = new TypeToken<ArrayList<Group>>() {}.getType();
+            Type groupListType = new TypeToken<ArrayList<ChatSystem>>() {}.getType();
             allChatSystems = gson.fromJson(reader, groupListType);
             if (allChatSystems == null) {
                 allChatSystems = new ArrayList<>();
@@ -78,6 +81,15 @@ public class ChatSystemFacade {
         } catch (IOException e) {
             System.err.println("Error loading Chats from file: " + e.getMessage());
         }
+    }
+    
+    public boolean isListsTheSame(List<String> l1, List<String> l2){
+        if (l1.size() != l2.size()) return false;
+        
+        for(String str : l1){
+            if (! l2.contains(str)) return false;
+        }
+        return true;
     }
 
 }
