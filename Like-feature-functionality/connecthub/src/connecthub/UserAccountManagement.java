@@ -244,7 +244,12 @@ public Map<String, String> getAllUsernames() {
                 throw new IllegalArgumentException("Username is already taken.");
             }
         }
-
+//if (userId.equals(username)) {
+//        throw new IllegalArgumentException("User ID cannot be the same as the Username.");
+//    }
+//if (userId.equals(email)) {
+//        throw new IllegalArgumentException("User ID cannot be the same as the Email.");
+//    }
         // Validate email format
         if (!validateEmail(email)) {
             throw new IllegalArgumentException("Invalid email format.");

@@ -11,15 +11,13 @@ import java.util.Map;
 
 public class ChatSystem implements Publisher{
 
-    private List<ChatClient> currentClients;
+    private List<String> currentClientsIDs;
     private List<Message> fullChat;
-    private List<String> usersIds;
     private String chatSystemID = "";
     
     public ChatSystem(){
-        currentClients = new ArrayList<ChatClient>();
+        currentClientsIDs = new ArrayList<String>();
         fullChat = new ArrayList<Message>();
-        usersIds = new ArrayList<String>();
     }
     
     public String getSystemID(){
@@ -30,12 +28,17 @@ public class ChatSystem implements Publisher{
         chatSystemID = newID;
     }
     
-//    public void updateSystemID(){
-//        this.chatSystemID = "";
-//        for (ChatClient Client : currentClients){
-//            chatSystemID += Client.getUserID();
-//        }
-//    }
+    public List<String> getChatUsersIds(){
+        return currentClientsIDs;
+    }
+    
+    public ChatClient getClient(String UserID){
+        for (String clientID : currentClientsIDs){
+            if (clientID.equals(UserID)){
+                return new ChatClient(UserID, this);
+            }
+        } return null;
+    }
     
     public List<Message> getFullChat(){
         return this.fullChat;
@@ -43,24 +46,21 @@ public class ChatSystem implements Publisher{
     
     @Override
     public void subscribe(Subscriber s) {
-        currentClients.add((ChatClient) s);
-        s.setPublisher(this);
         ChatClient ch = (ChatClient)s;
-        this.usersIds.add(ch.getUserID());
+        this.currentClientsIDs.add(ch.getUserID());
+        s.setPublisher(this);
     }
 
     @Override
     public void unSubscribe(Subscriber s) {
-        currentClients.remove((ChatClient) s);
-        s.unsetPublisher();
         ChatClient ch = (ChatClient)s;
-        this.usersIds.remove(ch.getUserID());
+        this.currentClientsIDs.remove(ch.getUserID());
+        s.unsetPublisher();
     }
 
     @Override
     public void notifySubscribers() {
         //Should  Save new Data
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
     

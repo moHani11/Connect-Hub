@@ -39,6 +39,8 @@ public class NewsFeed extends javax.swing.JFrame {
     JPanel friendsPanel = null;
     boolean explorePanelViewed = false;
     JPanel explorePanel = null;
+    ChatSystemFacade chatsFacade;
+    
     public NewsFeed(User user) {
     
          this.setLocation(400, 120);
@@ -49,6 +51,8 @@ public class NewsFeed extends javax.swing.JFrame {
        // Add the search bar to panel
          postsFeed();
          storiesFeed();
+         this.chatsFacade = new ChatSystemFacade();
+         
            this.setVisible(true);
 
           JFrame frame = this;
@@ -449,12 +453,39 @@ NotificationsGUI noti = null;
         ProfileGUI pGUI = new ProfileGUI(user, p, false);
         this.setVisible(false);
         pGUI.setVisible(true);
-         
+         //////////////////////////////////////////////////////////////////////////
         });
-        
-        
+        JButton ChatButton = new JButton(" Chat ");
+        ChatButton.addActionListener(e -> {
+//           String userInput = JOptionPane.showInputDialog(null, 
+//                "Enter a message:", 
+//                "Input Dialog", 
+//                JOptionPane.PLAIN_MESSAGE);
+//        String storedString = "";
+//        if (userInput != null) {
+//            storedString = userInput;
+//            System.out.println("You entered: " + storedString);
+//        } else {
+//            System.out.println("No input provided (dialog canceled).");
+//        }
+//        
+//        List<String> chatIDs = new ArrayList<String>();
+//        chatIDs.add(this.user.getUserId());
+//        chatIDs.add(friend.getUserId());
+//
+//        ChatSystem chat = chatsFacade.getChatByUsers(chatIDs);
+//        chatsFacade.AddMessageToChat(storedString, this.user.getUserId(), chat);
+//            
+  
+            friendChatUI chatUI = new friendChatUI(user, friend);
+            this.setVisible(false);
+            chatUI.setVisible(true);
+        });
+                
+        ///////////////////////////////////////////////////////////////////////////////////////
         friendPanel.add(friendLabel);
         friendPanel.add(ViewButton);
+        friendPanel.add(ChatButton);
         friendsPanel.add(friendPanel);
 }
         friendsPanel.setSize(panel_width+100, panel_height);
@@ -601,7 +632,7 @@ NotificationsGUI noti = null;
     
     }
     
-public void generateFeedPosts() {
+   public void generateFeedPosts() {
     ArrayList<Post> postsArray = new ArrayList<>();
     List<String> friendsList = new ArrayList<>(this.user.getFriends());
     postsArray.addAll(user.postManager.getPostsByFriends(friendsList));
@@ -641,7 +672,6 @@ public void generateFeedPosts() {
         this.postss.add(panel);
     }
 }
-
     
     public void postsFeed(){
         
@@ -724,7 +754,7 @@ public void generateFeedPosts() {
         likeButton.setSize(LIKE_BUTTON_WIDTH, LIKE_BUTTON_HEIGHT);
         commentButton.setSize(COMMENT_BUTTON_WIDTH, COMMENT_BUTTON_HEIGHT);
         
-  
+        postsActionsPanel.add(likeButton);
         postsActionsPanel.add(commentButton);
         
         
