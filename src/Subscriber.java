@@ -11,5 +11,6 @@ package connecthub;
 public interface Subscriber {
     
     public abstract void setPublisher(Publisher p);
+    public abstract void unsetPublisher();
     public abstract void updatePublisher();
 }
